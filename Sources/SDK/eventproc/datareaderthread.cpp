@@ -21,32 +21,17 @@
 
 using namespace std;
 
-DataReaderThread::DataReaderThread(CeleX4* pSensor, const std::string &name)
-    : XThread(name)
-    , m_bPipeoutAllowed(false)
-    , m_pCelexSensor(pSensor)
-{
+DataReaderThread::DataReaderThread(CeleX4* pSensor, const std::string &name) : XThread(name), m_bPipeoutAllowed(false), m_pCelexSensor(pSensor) { }
 
-}
+DataReaderThread::~DataReaderThread() { }
 
-DataReaderThread::~DataReaderThread()
-{
+void DataReaderThread::startReadData(bool bRead) { m_bPipeoutAllowed = bRead; }
 
-}
-
-void DataReaderThread::startReadData(bool bRead)
-{
-    m_bPipeoutAllowed = bRead;
-}
-
-void DataReaderThread::run()
-{
-    while (m_bRun)
-    {
+void DataReaderThread::run() {
+    while (m_bRun) {
         //cout << "---------- DataReaderThread::run ----------" << endl;
 		//::EnterCriticalSection(&m_pCelexSensor->m_criticalSection);
-        if (m_bPipeoutAllowed)
-        {
+        if (m_bPipeoutAllowed) {
             //if (!m_pCelexSensor->isSdramFull())
             {
                 m_pCelexSensor->pipeOutFPGAData();

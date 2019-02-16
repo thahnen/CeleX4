@@ -20,8 +20,7 @@
 #include "../include/celex4/celex4.h"
 #include <stdint.h>
 
-class FPGADataReader
-{
+class FPGADataReader {
 public:
 	enum IMUDATAType {
 		NO_IMU_DATA = 0,
@@ -34,20 +33,19 @@ public:
 		ACC_OFST_A_DATA = 7,
 		ACC_OFST_B_DATA = 8
 	};
+
     static unsigned int getColumn(unsigned char data[EVENT_SIZE]);
     static unsigned int getRow(unsigned char data[EVENT_SIZE]);
     static unsigned int getTimeStamp(unsigned char data[EVENT_SIZE]);
     static unsigned int getBrightness(unsigned char data[EVENT_SIZE]);
-    static unsigned int getCurrentRow() { return s_uiCurrentRow;    }
+    static unsigned int getCurrentRow() { return s_uiCurrentRow; }
 	static unsigned int getLastRow() { return s_uiLastRow; }
-    static unsigned int getTFromFPGA()  { return s_uiTFromFPGA;     }
+    static unsigned int getTFromFPGA() { return s_uiTFromFPGA; }
 	static unsigned int getLastTFromFPGA() { return s_uiLastTFromFPGA; }
-    static unsigned int getMapT()       { return s_uiMapT;          }
-    static unsigned int getEventType()  { return s_uiEventType; }
+    static unsigned int getMapT() { return s_uiMapT; }
+    static unsigned int getEventType() { return s_uiEventType; }
     static unsigned int getSpecialEventType() { return s_uiSpecialEventType; }
-
 	static void setEventCounter(uint32_t counter) { s_uiEventTCounter = counter; }
-
 	static void setFixedEventCounter(uint32_t counter) { s_uiFixedEventTCounter = counter; }
 
     //check event type
@@ -56,6 +54,7 @@ public:
     static bool isRowEvent(unsigned char data[EVENT_SIZE]);
     static bool isSpecialEvent(unsigned char data[EVENT_SIZE]);
 	static unsigned int MapTime(unsigned char data[EVENT_SIZE]);
+
 	//IMU data
 	static IMUDATAType isIMUData(unsigned char data[4]);
 	static int16_t getIMU_X(unsigned char data[4]);

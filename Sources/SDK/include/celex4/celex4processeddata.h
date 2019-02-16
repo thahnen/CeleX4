@@ -18,16 +18,42 @@
 #define CELEX4_PROCESSED_DATA_H
 
 #include "celex4.h"
-#include <opencv2/opencv.hpp>
-class CeleX4ProcessedData
-{
+
+#ifndef COMPATIBILITY_VERSION
+	#ifdef __has_include
+		#if __has_include(<opencv/opencv2/opencv.hpp>)
+			#include <opencv/opencv2/opencv.hpp>
+			#define COMPATIBILITY_VERSION 4
+		#elif __has_include(<opencv2/opencv.hpp>)
+			#include <opencv2/opencv.hpp>
+			#define COMPATIBILITY_VERSION 2
+		#else
+			#error "Keine installierte OpenCV-Version gefunden!"
+		#endif
+	#else
+		#error "Nicht als C++17 kompiliert!"
+	#endif // __has_include
+#else
+	#if COMPATIBILITY_VERSION == 4
+		#include <opencv/opencv2/opencv.hpp>
+	#elif COMPATIBILITY_VERSION == 2
+		#include <opencv2/opencv.hpp>
+	#else
+		#error "Falsche OpenCV-Version oder Installation!"
+	#endif
+#endif // !COMPATIBILITY_VERSION
+
+
+class CeleX4ProcessedData {
 public:
 	CeleX4ProcessedData();
 	~CeleX4ProcessedData();
 
 	inline emSensorMode getSensorMode() { return m_emSensorMode; }
 	void setSensorMode(emSensorMode mode) { m_emSensorMode = mode; }
+
 	//----------------save vector for a frame-------------
+
 	inline void setEventDataVector(std::vector<EventData> eventData) { m_vectorEventData.swap(eventData); }
 	inline std::vector<EventData> getEventDataVector() { return m_vectorEventData; }
 
@@ -42,10 +68,9 @@ public:
 
 	inline unsigned char* getFullPicBuffer() { return m_pFullPicBuffer; }
 	inline cv::Mat getFullPicMat() { return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pFullPicBuffer); }
-	inline unsigned char* getEventPicBuffer(emEventPicMode mode)
-	{
-		switch (mode)
-		{
+
+	inline unsigned char* getEventPicBuffer(emEventPicMode mode) {
+		switch (mode) {
 		case EventBinaryPic:
 			return m_pEventBinaryPic;
 		case EventAccumulatedPic:
@@ -69,10 +94,9 @@ public:
 		}
 		return NULL;
 	}
-	inline cv::Mat getEventPicMat(emEventPicMode mode)
-	{
-		switch (mode)
-		{
+
+	inline cv::Mat getEventPicMat(emEventPicMode mode) {
+		switch (mode) {
 		case EventBinaryPic:
 			return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventBinaryPic); 
 		case EventAccumulatedPic:
@@ -95,6 +119,7 @@ public:
 			break;
 		}
 	}
+
 	inline unsigned char* getOpticalFlowPicBuffer() { return m_pEventOpticalFlow; }
 	inline unsigned char* getOpticalFlowDirectionPicBuffer() { return m_pEventOpticalFlowDirection; }
 	inline unsigned char* getOpticalFlowSpeedPicBuffer() { return m_pEventOpticalFlowSpeed; }
@@ -104,26 +129,26 @@ public:
 	inline cv::Mat getOpticalFlowSpeedPicMat() { return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventOpticalFlowSpeed); }
 
 private:
-	std::vector<EventData> m_vectorEventData;	
-	std::vector<IMUData> m_vectorIMUData;	
-	FrameData			 m_frameData;	
-	FrameData			 m_fixedEventData;
-	unsigned char*    m_pFullPicBuffer;
-	unsigned char*    m_pEventBinaryPic;
-	unsigned char*    m_pEventAccumulatedPic;
-	unsigned char*    m_pEventGrayPic;
-	unsigned char*    m_pEventSuperimposedPic;
-	unsigned char*    m_pEventDenoisedBinaryPic;
-	unsigned char*    m_pEventDenoisedGrayPic;
-	unsigned char*    m_pEventOpticalFlow;
-	unsigned char*    m_pEventOpticalFlowDirection;
-	unsigned char*    m_pEventOpticalFlowSpeed;
-	unsigned char*	  m_pEventCountPic; 
-	unsigned char*	  m_pEventDenoisedByTimeBinaryPic;
-	unsigned char*	  m_pEventDenoisedByTimeGrayPic;
+	std::vector<EventData>	m_vectorEventData;	
+	std::vector<IMUData>	m_vectorIMUData;	
+	FrameData				m_frameData;	
+	FrameData				m_fixedEventData;
+	unsigned char*			m_pFullPicBuffer;
+	unsigned char*			m_pEventBinaryPic;
+	unsigned char*			m_pEventAccumulatedPic;
+	unsigned char*			m_pEventGrayPic;
+	unsigned char*			m_pEventSuperimposedPic;
+	unsigned char*			m_pEventDenoisedBinaryPic;
+	unsigned char*			m_pEventDenoisedGrayPic;
+	unsigned char*			m_pEventOpticalFlow;
+	unsigned char*			m_pEventOpticalFlowDirection;
+	unsigned char*			m_pEventOpticalFlowSpeed;
+	unsigned char*			m_pEventCountPic; 
+	unsigned char*			m_pEventDenoisedByTimeBinaryPic;
+	unsigned char*			m_pEventDenoisedByTimeGrayPic;
 
-	int               m_nMeanIntensity;
-	emSensorMode	  m_emSensorMode;
+	int						m_nMeanIntensity;
+	emSensorMode			m_emSensorMode;
 };
 
 #endif // CELEX4_PROCESSED_DATA_H

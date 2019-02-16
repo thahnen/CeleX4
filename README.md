@@ -1,4 +1,76 @@
-# CeleX4
+# Meine Veränderungen am CeleX4 Repo
+---
+
+## Veränderte Dateien sind:
+* README.md
+* /Sources/SDK/Makefile
+* /Sources/SDK/include/celextypes.h
+* /Sources/SDK/include/dvslib.h
+* /Sources/SDK/include/celex4/celex4processeddata.h
+* /Sources/SDK/include/celex4/celex4datamanager.h
+* /Sources/SDK/include/celex4/celex4.h
+* /Sources/SDK/frontpanel/okFrontPanelDLL.h
+* /Sources/SDK/frontpanel/frontpanel.h
+* /Sources/SDK/frontpanel/frontpanel.cpp
+* /Sources/SDK/eventproc/fpgadatareader.h
+* /Sources/SDK/eventproc/fpgadatareader.cpp
+* /Sources/SDK/eventproc/eventprocessing.cpp
+* /Sources/SDK/eventproc/datarecorder.h
+* /Sources/SDK/eventproc/datarecorder.cpp
+* /Sources/SDK/eventproc/datareaderthread.h
+* /Sources/SDK/eventproc/datareaderthread.cpp
+* /Sources/SDK/eventproc/dataprocessthread.h
+* /Sources/SDK/eventproc/dataprocessthread.cpp
+* /Sources/SDK/eventproc/celex4processeddata.cpp
+* /Sources/SDK/configproc/hhxmlreader.h
+* /Sources/SDK/configproc/hhxmlreader.cpp
+* /Sources/SDK/configproc/hhwireincommand.h
+* /Sources/SDK/configproc/hhwireincommand.cpp
+* /Sources/SDK/configproc/hhdelaycommand.h
+* /Sources/SDK/configproc/hhdelaycommand.cpp
+* /Sources/SDK/configproc/hhcommand.h
+* /Sources/SDK/configproc/hhcommand.cpp
+* /Sources/SDK/base/xthread.h
+* /Sources/SDK/base/xthread.cpp
+* /Sources/SDK/base/xbase.h
+* /Sources/SDK/base/xbase.cpp
+* /Sources/SDK/base/dataqueue.h
+* /Sources/SDK/base/dataqueue.cpp
+
+
+
+## NICHT Veränderte Dateien sind:
+* ReleaseNotes.txt
+* LICENSE
+* /Sources/SDK/CeleX.vcxproj
+* /Sources/SDK/CeleX.sln
+* /Sources/SDK/lib/*
+* /Sources/SDK/configproc/tinyxml/*
+* /Sources/SDK/build/*
+* /Sources/FPGA/*
+* /Sources/CeleXDemo/*
+* /Samples/*
+* /Drivers/*
+* /Documentation/*
+* /DemoGUI/*
+
+
+## NOCH NICHT Veränderte Dateien sind:
+* /Sources/SDK/eventproc/fpgadataprocessor.h
+* /Sources/SDK/eventproc/fpgadataprocessor.cpp
+* /Sources/SDK/eventproc/eventprocessing.cpp
+* /Sources/SDK/eventproc/celex4.cpp
+* /Sources/SDK/configproc/hhsequencemgr.h
+* /Sources/SDK/configproc/hhsequencemgr.cpp
+* /Sources/SDK/base/xthread.cpp
+
+
+## Dateien, die von Kompatibilitätsänderungen OpenCV3 => 4 betroffen sind:
+* kommt noch
+
+---
+
+## CeleX4
 SDK for CeleX4 sensor.
 
 ![Structure](https://github.com/CelePixel/CeleX4-SDK/blob/master/Sources/CeleXDemo/images/SDK_Structure.png)

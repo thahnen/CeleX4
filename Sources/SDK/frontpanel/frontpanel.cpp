@@ -18,13 +18,10 @@
 
 FrontPanel* FrontPanel::spFrontPanel = NULL;
 
-void FrontPanel::initializeFPGA(const string &bitfileName)
-{
+void FrontPanel::initializeFPGA(const string &bitfileName) {
     cout << "Begin initialize FPGA." << endl;
-    if (!myxem->IsOpen())
-    {
-        if (okCFrontPanel::NoError != myxem->OpenBySerial())
-        {
+    if (!myxem->IsOpen()) {
+        if (okCFrontPanel::NoError != myxem->OpenBySerial()) {
             cout << "FrontPanel Device not found..." << endl;
             return;
         }
@@ -38,15 +35,12 @@ void FrontPanel::initializeFPGA(const string &bitfileName)
     cout << "Device serial number: " << myxem->GetSerialNumber() << endl;
     cout << "Device ID string: " << myxem->GetDeviceID() << endl;
 
-    if (okCFrontPanel::NoError != myxem->OpenBySerial(myxem->GetSerialNumber()))
-    {
+    if (okCFrontPanel::NoError != myxem->OpenBySerial(myxem->GetSerialNumber())) {
         cout << "Can't open Serial." << endl;
         return;
-    }
-    else
-    {
-        cout << "Serial opens successfully." << endl;
-    }
+    } else {
+		cout << "Serial opens successfully." << endl;
+	}
 
     XBase base;
     std::string bitfilePath = base.getApplicationDirPath(); //+ "/" + bitfileName;
@@ -54,15 +48,16 @@ void FrontPanel::initializeFPGA(const string &bitfileName)
     bitfilePath += "\\";
 #endif
     bitfilePath += bitfileName;
-    if (!base.isFileExists(bitfilePath))
-    {
+
+    if (!base.isFileExists(bitfilePath)) {
         return;
     }
-    if (okCFrontPanel::NoError != myxem->ConfigureFPGA(bitfilePath))
-    {
+    
+	if (okCFrontPanel::NoError != myxem->ConfigureFPGA(bitfilePath)) {
         cout << "Fail to load *.bit file!" << endl;
         return;
     }
+
     mReady = true;
     cout << "FPGA Ready." << endl;
 
@@ -70,31 +65,27 @@ void FrontPanel::initializeFPGA(const string &bitfileName)
     //operation_reset_dereset_ALL();
 }
 
-void FrontPanel::uninitializeFPGA()
-{
+void FrontPanel::uninitializeFPGA() {
     myxem->ResetFPGA();
     myxem->Close();
 }
 
-bool FrontPanel::wireIn(uint32_t address, uint32_t value, uint32_t mask)
-{
-    if (okCFrontPanel::NoError != myxem->SetWireInValue(address, value, mask))
-    {
+bool FrontPanel::wireIn(uint32_t address, uint32_t value, uint32_t mask) {
+    if (okCFrontPanel::NoError != myxem->SetWireInValue(address, value, mask)) {
 		cout << "------------------ WireIn error ------------------" << endl;
         return false;
     }
+
     myxem->UpdateWireIns();
     return true;
 }
 
-void FrontPanel::wireOut(uint32_t address, uint32_t mask, uint32_t *pValue)
-{
+void FrontPanel::wireOut(uint32_t address, uint32_t mask, uint32_t *pValue) {
     myxem->UpdateWireOuts();
     *pValue = (myxem->GetWireOutValue(address)) & mask;
 }
 
-long FrontPanel::blockPipeOut(uint32_t address, int blockSize, long length, unsigned char *data)
-{
+long FrontPanel::blockPipeOut(uint32_t address, int blockSize, long length, unsigned char *data) {
     //format is addr: blockSize: byte number: buffer
     long dataLen = myxem->ReadFromBlockPipeOut(address, blockSize, length, data);
     return dataLen;

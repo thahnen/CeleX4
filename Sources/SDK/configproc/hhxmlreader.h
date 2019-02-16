@@ -28,8 +28,7 @@ class HHCommandBase;
 class HHSequence;
 class HHSequenceMgr;
 
-class HHXmlReader
-{
+class HHXmlReader {
 public:
     HHXmlReader();
     ~HHXmlReader();
@@ -38,7 +37,6 @@ public:
     bool importCommands(std::vector<HHCommandBase*>& commandList, TiXmlDocument* pDom);
     bool importSequences(HHSequenceMgr* pSeqMgr, std::vector<HHSequence*>& sequenceList, TiXmlDocument* pDom);
     bool importSliders(HHSequenceMgr* pSeqMgr, std::vector<HHSequence*>& sliderList, TiXmlDocument* pDom);
-
  private:
     bool getNumber(const std::string& text, uint32_t* pNumber);
 };

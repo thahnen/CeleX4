@@ -22,8 +22,7 @@
 #include "fpgadataprocessor.h"
 #include "../include/celex4/celex4.h"
 
-class DataProcessThread : public XThread
-{
+class DataProcessThread : public XThread {
 public:
     DataProcessThread(const std::string& name = "DataProcessThread");
     ~DataProcessThread();
@@ -35,10 +34,8 @@ public:
     FPGADataProcessor* getDataProcessor();
     CeleX4::PlaybackState getPlaybackState();
     void setPlaybackState(CeleX4::PlaybackState	state);
-
 protected:
     void run() override;
-
 private:
     DataQueue                m_queueData;
     FPGADataProcessor        m_dataProcessor;

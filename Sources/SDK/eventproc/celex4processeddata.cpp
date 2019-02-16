@@ -17,22 +17,11 @@
 #include "../include/celex4/celex4.h"
 #include "../include/celex4/celex4processeddata.h"
 
-CeleX4ProcessedData::CeleX4ProcessedData()
-	: m_pFullPicBuffer(NULL)
-	, m_pEventBinaryPic(NULL)
-	, m_pEventAccumulatedPic(NULL)
-	, m_pEventGrayPic(NULL)
-	, m_pEventSuperimposedPic(NULL)
-	, m_pEventDenoisedBinaryPic(NULL)
-	, m_pEventDenoisedGrayPic(NULL)
-	, m_pEventCountPic(NULL)
-	, m_pEventOpticalFlow(NULL)
-	, m_pEventOpticalFlowDirection(NULL)
-	, m_pEventOpticalFlowSpeed(NULL)
-	, m_pEventDenoisedByTimeBinaryPic(NULL)
-	, m_pEventDenoisedByTimeGrayPic(NULL)
-	, m_nMeanIntensity(0)
-{
+CeleX4ProcessedData::CeleX4ProcessedData() : m_pFullPicBuffer(NULL), m_pEventBinaryPic(NULL), m_pEventAccumulatedPic(NULL)
+											, m_pEventGrayPic(NULL), m_pEventSuperimposedPic(NULL), m_pEventDenoisedBinaryPic(NULL)
+											, m_pEventDenoisedGrayPic(NULL), m_pEventCountPic(NULL), m_pEventOpticalFlow(NULL)
+											, m_pEventOpticalFlowDirection(NULL), m_pEventOpticalFlowSpeed(NULL), m_pEventDenoisedByTimeBinaryPic(NULL)
+											, m_pEventDenoisedByTimeGrayPic(NULL), m_nMeanIntensity(0) {
 	m_pFullPicBuffer = new unsigned char[PIXELS_NUMBER];
 	m_pEventBinaryPic = new unsigned char[PIXELS_NUMBER];
 	m_pEventAccumulatedPic = new unsigned char[PIXELS_NUMBER];
@@ -48,6 +37,4 @@ CeleX4ProcessedData::CeleX4ProcessedData()
 	m_pEventDenoisedByTimeGrayPic = new unsigned char[PIXELS_NUMBER];
 }
 
-CeleX4ProcessedData::~CeleX4ProcessedData()
-{
-}
+CeleX4ProcessedData::~CeleX4ProcessedData() { }

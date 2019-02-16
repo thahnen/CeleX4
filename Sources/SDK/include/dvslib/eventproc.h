@@ -18,20 +18,44 @@
 #define CELEX_IMGPROC_H
 
 #ifdef _WIN32
-#ifdef CELEX_API_EXPORTS
-#define CELEX_EXPORTS __declspec(dllexport)
+	#ifdef CELEX_API_EXPORTS
+		#define CELEX_EXPORTS __declspec(dllexport)
+	#else
+		#define CELEX_EXPORTS __declspec(dllimport)
+	#endif
 #else
-#define CELEX_EXPORTS __declspec(dllimport)
-#endif
-#else
-#if defined(CELEX_LIBRARY)
-#define CELEX_EXPORTS
-#else
-#define CELEX_EXPORTS
-#endif
+	#if defined(CELEX_LIBRARY)
+		#define CELEX_EXPORTS
+	#else
+		#define CELEX_EXPORTS
+	#endif
 #endif
 
-#include <opencv2/opencv.hpp>
+
+#ifndef COMPATIBILITY_VERSION
+	#ifdef __has_include
+		#if __has_include(<opencv/opencv2/opencv.hpp>)
+			#include <opencv/opencv2/opencv.hpp>
+			#define COMPATIBILITY_VERSION 4
+		#elif __has_include(<opencv2/opencv.hpp>)
+			#include <opencv2/opencv.hpp>
+			#define COMPATIBILITY_VERSION 2
+		#else
+			#error "Keine installierte OpenCV-Version gefunden!"
+		#endif
+	#else
+		#error "Nicht als C++17 kompiliert!"
+	#endif // __has_include
+#else
+	#if COMPATIBILITY_VERSION == 4
+		#include <opencv/opencv2/opencv.hpp>
+	#elif COMPATIBILITY_VERSION == 2
+		#include <opencv2/opencv.hpp>
+	#else
+		#error "Falsche OpenCV-Version oder Installation!"
+	#endif
+#endif // !COMPATIBILITY_VERSION
+
 
 namespace dvs {
 	//for eventprocessing---------TEST----------------------------------------------------------------------

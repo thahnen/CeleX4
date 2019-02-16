@@ -18,39 +18,27 @@
 #include "../base/xbase.h"
 
 uint8_t* pData;
-DataRecorder::DataRecorder()
-	: m_bRecording(false)
-	, m_iTimeStampStart(0)
-{
+DataRecorder::DataRecorder() : m_bRecording(false), m_iTimeStampStart(0) {
 	pData = new uint8_t[1536001];
 }
 
-DataRecorder::~DataRecorder()
-{
-}
+DataRecorder::~DataRecorder() { }
 
-bool DataRecorder::isRecording()
-{
-	return m_bRecording;
-}
+bool DataRecorder::isRecording() { return m_bRecording; }
 
-void DataRecorder::startRecording(std::string filePath)
-{
+void DataRecorder::startRecording(std::string filePath) {
 	XBase base;
 	m_iTimeStampStart = base.getTimeStamp();
-
 	m_ofstreamRecord.open(filePath.c_str(), std::ios::binary);
-	if (!m_ofstreamRecord.is_open())
-		cout << "Can't open recording file." << endl;
+
+	if (!m_ofstreamRecord.is_open()) cout << "Can't open recording file." << endl;
 
 	BinFileAttributes header;
 	m_ofstreamRecord.write((char*)&header, sizeof(BinFileAttributes));
-
 	m_bRecording = true;
 }
 
-void DataRecorder::stopRecording(uint32_t clock, int mode)
-{
+void DataRecorder::stopRecording(uint32_t clock, int mode) {
 	XBase base;
 
 	int iTimeRecorded = base.getTimeStamp() - m_iTimeStampStart;
@@ -78,24 +66,19 @@ void DataRecorder::stopRecording(uint32_t clock, int mode)
 	m_ofstreamRecord.close();
 }
 
-void DataRecorder::writeData(unsigned char* pData, long length)
-{
-	m_ofstreamRecord.write((char*)pData, length);
-}
+void DataRecorder::writeData(unsigned char* pData, long length) { m_ofstreamRecord.write((char*)pData, length); }
 
-void DataRecorder::writeData(vector<uint8_t> vecData)
-{
-	if (vecData.size() > 1536001)
-		return;
+void DataRecorder::writeData(vector<uint8_t> vecData) {
+	if (vecData.size() > 1536001) return;
 
 	//--- write package size ---
 	uint32_t size = vecData.size();
 	m_ofstreamRecord.write((char*)&size, 4);
 
 	//--- write package data ---
-	for (int i = 0; i < vecData.size(); i++)
-	{
+	for (int i = 0; i < vecData.size(); i++) {
 		*(pData+i) = vecData.at(i);
 	}
+
 	m_ofstreamRecord.write((char*)pData, vecData.size());
 }

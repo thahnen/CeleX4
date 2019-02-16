@@ -21,8 +21,7 @@
 
 using namespace std;
 
-class XBase
-{
+class XBase {
 public:
     XBase();
     ~XBase();

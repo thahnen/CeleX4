@@ -19,45 +19,44 @@
 
 #include <stdint.h>
 
-#define SLIDER_DELAY 100
-#define MAX_LOG_LINES 100
+#define SLIDER_DELAY			100
+#define MAX_LOG_LINES			100
 
-#define MAX_PAGE_COUNT 100000
+#define MAX_PAGE_COUNT			100000
 
-#define PIPEOUT_TIMER 10
-#define EVENT_SIZE 4
-#define PIXELS_PER_COL 768
-#define PIXELS_PER_ROW 640
-#define PIXELS_NUMBER 491520
+#define PIPEOUT_TIMER			10
+#define EVENT_SIZE				4
+#define PIXELS_PER_COL			768
+#define PIXELS_PER_ROW			640
+#define PIXELS_NUMBER			491520
 
-#define CELEX5_COL 1280
-#define CELEX5_ROW 800
-#define  CELEX5_PIXELS_NUMBER 1024000
+#define CELEX5_COL				1280
+#define CELEX5_ROW				800
+#define  CELEX5_PIXELS_NUMBER	1024000
 
-#define MIRROR_VERTICAL 1
-#define MIRROR_HORIZONTAL 1
+#define MIRROR_VERTICAL			1
+#define MIRROR_HORIZONTAL		1
 
-#define FILE_COMMANDS       "commands.xml"
-#define FILE_SEQUENCES      "sequences.xml"
-#define FILE_SLIDERS        "sliders.xml"
-#define FILE_CELEX5_CFG		"CeleX5_Commands.xml"
-#define FILE_CELEX5_CFG_NEW	"CeleX5_Commands_New.xml"
+#define FILE_COMMANDS			"commands.xml"
+#define FILE_SEQUENCES			"sequences.xml"
+#define FILE_SLIDERS			"sliders.xml"
+#define FILE_CELEX5_CFG			"CeleX5_Commands.xml"
+#define FILE_CELEX5_CFG_NEW		"CeleX5_Commands_New.xml"
 
-#define SEQUENCE_LAYOUT_WIDTH 3 //7
-#define SLIDER_LAYOUT_WIDTH   1 //4
-#define DIALOG_LAYOUT_WIDTH   2
+#define SEQUENCE_LAYOUT_WIDTH	3 // 7
+#define SLIDER_LAYOUT_WIDTH		1 // 4
+#define DIALOG_LAYOUT_WIDTH		2
 
-#define FPN_CALCULATION_TIMES 5
+#define FPN_CALCULATION_TIMES	5
 
-#define TIMER_CYCLE 25000000  //1s
-#define HARD_TIMER_CYCLE 262144  //2^17=131072; 2^18=262144
+#define TIMER_CYCLE				25000000	// 1s
+#define HARD_TIMER_CYCLE		262144		// 2^17=131072; 2^18=262144
 
-typedef struct EventData
-{
+typedef struct EventData {
 	uint16_t    col;
 	uint16_t    row;
 	uint16_t    brightness;
-	uint16_t    polarity; //-1: intensity weakened; 1: intensity is increased; 0 intensity unchanged
+	uint16_t    polarity;		// -1: intensity weakened; 1: intensity is increased; 0 intensity unchanged
 	uint32_t    t;
 } EventData;
 

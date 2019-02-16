@@ -20,17 +20,14 @@
 #include "../base/xthread.h"
 
 class CeleX4;
-class DataReaderThread : public XThread
-{
+class DataReaderThread : public XThread {
 public:
     DataReaderThread(CeleX4* pSensor, const std::string& name = "DataReaderThread");
     ~DataReaderThread();
 
     void startReadData(bool bRead);
-
 protected:
     void run() override;
-
 private:
     bool    m_bPipeoutAllowed;
 	CeleX4* m_pCelexSensor;

@@ -20,14 +20,12 @@
 #include <queue>
 #include <stdint.h>
 
-typedef struct DataInfo
-{
+typedef struct DataInfo {
     unsigned char* pData;
     unsigned long  length;
 } DataInfo;
 
-class DataQueue
-{
+class DataQueue {
 public:
     DataQueue();
     ~DataQueue();
@@ -36,15 +34,13 @@ public:
     void pop(unsigned char*& pData, long* length);
 	unsigned long size();
     void clear();
-
 private:
     std::queue<DataInfo> m_queue;
     unsigned long        m_size;
 };
 
 
-class CirDataQueue
-{
+class CirDataQueue {
 public:
     CirDataQueue(int queueCapacity);
     ~CirDataQueue();
@@ -58,7 +54,6 @@ public:
     bool isFull();
     void clear();
     unsigned char* head();
-
 private:
     std::vector<DataInfo>  m_queue;
     int                    m_iHead;

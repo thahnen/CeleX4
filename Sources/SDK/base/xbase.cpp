@@ -22,24 +22,18 @@
 #include <cstring>
 
 #ifdef _WIN32
-#include <windows.h>
+	#include <windows.h>
 #else
-#include <unistd.h>
+	#include <unistd.h>
 #endif
 
-XBase::XBase()
-{
+XBase::XBase() { }
 
-}
+XBase::~XBase(){ }
 
-XBase::~XBase()
-{
-
-}
-
-std::string XBase::getApplicationDirPath()
-{
+std::string XBase::getApplicationDirPath() {
     //D:\\Work\\build-okBaseTest-Desktop_Qt_5_9_1_MinGW_32bit-Debug\\debug\\okBaseTest.exe
+
 #ifdef _WIN32
     char path[1024];
     memset(path, 0, 1024);
@@ -51,73 +45,63 @@ std::string XBase::getApplicationDirPath()
     char path[1024];
     int cnt = readlink("/proc/self/exe", path, 1024);
 	cout << "XBase::getApplicationDirPath: readlink count = " << cnt << endl;
-    if(cnt < 0|| cnt >= 1024)
-    {
+    
+	if(cnt < 0|| cnt >= 1024) {
         return NULL;
     }
-    for(int i = cnt; i >= 0; --i)
-    {
-        if(path[i]=='/')
-        {
+
+    for(int i = cnt; i >= 0; --i) {
+        if(path[i]=='/') {
             path[i + 1]='\0';
             break;
         }
     }
+
     string strPath(path);
     return strPath;
 #endif
+
 }
 
-string XBase::getDateTimeStamp()
-{
+string XBase::getDateTimeStamp() {
     time_t tt = time(NULL);
     tm* t = NULL;
+
 #ifdef _WIN32
     localtime_s(t, &tt);
 #else
     t = localtime(&tt);
 #endif
+
     std::stringstream ss;
     //year
     ss << (t->tm_year+1900);
     //month
-    if (t->tm_mon < 10)
-        ss << "0" << t->tm_mon+1;
-    else
-        ss << t->tm_mon+1;
-    //
+    if (t->tm_mon < 10) ss << "0" << t->tm_mon+1;
+    else ss << t->tm_mon+1;
     //day
-    if (t->tm_mday < 10)
-        ss << "0" << t->tm_mday;
-    else
-        ss << t->tm_mday;
-    //
+    if (t->tm_mday < 10) ss << "0" << t->tm_mday;
+    else ss << t->tm_mday;
     ss << "_";
     //hour
-    if (t->tm_hour < 10)
-        ss << "0" << t->tm_hour;
-    else
-        ss << t->tm_hour;
+    if (t->tm_hour < 10) ss << "0" << t->tm_hour;
+    else ss << t->tm_hour;
     //Minute
-    if (t->tm_min < 10)
-        ss << "0" << t->tm_min;
-    else
-        ss << t->tm_min;
+    if (t->tm_min < 10) ss << "0" << t->tm_min;
+    else ss << t->tm_min;
     //Second
-    if (t->tm_sec < 10)
-        ss << "0" << t->tm_sec;
-    else
-        ss << t->tm_sec;
+    if (t->tm_sec < 10) ss << "0" << t->tm_sec;
+    else ss << t->tm_sec;
+
     return string(ss.str());
 }
 
-int XBase::getTimeStamp()
-{
+int XBase::getTimeStamp() {
+
 #ifdef _WIN32
 	time_t tt = time(NULL);
 	tm t;
 	localtime_s(&t, &tt);
-
 	return 3600 * t.tm_hour + 60 * t.tm_min + t.tm_sec;
 #else
 	time_t tt = time(NULL);
@@ -125,19 +109,20 @@ int XBase::getTimeStamp()
 	t = localtime(&tt);
 	return 3600 * t->tm_hour + 60 * t->tm_min + t->tm_sec;
 #endif
+
 }
 
-bool XBase::isFileExists(std::string filePath)
-{
+bool XBase::isFileExists(std::string filePath) {
     //"D:/Work/build-okBaseTest-Desktop_Qt_5_9_1_MinGW_32bit-Debug/debug/top.bit";
     printf("XBase::isFileExists: %s", filePath.c_str());
     fstream _file;
     _file.open(filePath.c_str(), ios::in);
-    if (!_file)
-    {
+
+    if (!_file) {
         printf("%s can't find!", filePath.c_str());
         return false;
     }
+
     _file.close();
     return true;
 }

@@ -14,53 +14,66 @@
 * limitations under the License.
 */
 
-#include <opencv2/opencv.hpp>
+#ifndef COMPATIBILITY_VERSION
+	#ifdef __has_include
+		#if __has_include(<opencv/opencv2/opencv.hpp>)
+			#include <opencv/opencv2/opencv.hpp>
+			#define COMPATIBILITY_VERSION 4
+		#elif __has_include(<opencv2/opencv.hpp>)
+			#include <opencv2/opencv.hpp>
+			#define COMPATIBILITY_VERSION 2
+		#else
+			#error "Keine installierte OpenCV-Version gefunden!"
+		#endif
+	#else
+		#error "Nicht als C++17 kompiliert!"
+	#endif // __has_include
+#else
+	#if COMPATIBILITY_VERSION == 4
+		#include <opencv/opencv2/opencv.hpp>
+	#elif COMPATIBILITY_VERSION == 2
+		#include <opencv2/opencv.hpp>
+	#else
+		#error "Falsche OpenCV-Version oder Installation!"
+	#endif
+#endif // !COMPATIBILITY_VERSION
+
 #include "../include/celextypes.h"
 #include "../include/dvslib/eventproc.h"
 
 namespace dvs {
-
-	class EventProcessing
-	{
+	class EventProcessing {
 	public:
 		EventProcessing() { }
 		~EventProcessing() { }
 
-		static int calculateDenoiseScore(const cv::Mat& currImg, int row, int col)
-		{
+		static int calculateDenoiseScore(const cv::Mat& currImg, int row, int col) {
 			bool bHasPreImage = true;
-			if (currImg.empty())
-			{
-				return 0;
-			}
-			if (m_matPreEventPicBuffer.empty())
-			{
+			if (currImg.empty()) return 0;
+
+			if (m_matPreEventPicBuffer.empty()) {
 				m_matPreEventPicBuffer = cv::Mat::zeros(currImg.size(), CV_8UC1);
 				bHasPreImage = false;
 			}
+
 			//calculate current image
 			int count1 = 0;
 			int count2 = 0;
-			for (int i = row - 1; i < row + 2; ++i)
-			{
-				for (int j = col - 1; j < col + 2; ++j)
-				{
+			for (int i = row - 1; i < row + 2; ++i) {
+				for (int j = col - 1; j < col + 2; ++j) {
 					int index = i * PIXELS_PER_COL + j;
-					if (index < 0 || index == row * PIXELS_PER_COL + col || index >= PIXELS_NUMBER)
-						continue;
-					if (currImg.ptr<uchar>(index / PIXELS_PER_COL)[index % PIXELS_PER_COL] > 0)
-						++count1;
-					else
-						++count2;
+					if (index < 0 || index == row * PIXELS_PER_COL + col || index >= PIXELS_NUMBER) continue;
+
+					if (currImg.ptr<uchar>(index / PIXELS_PER_COL)[index % PIXELS_PER_COL] > 0) ++count1;
+					else ++count2;
 				}
 			}
-			if (!bHasPreImage)
-			{
-				if (count1 >= count2)
-					return 255;
-				else
-					return 0;
+
+			if (!bHasPreImage) {
+				if (count1 >= count2) return 255;
+				else return 0;
 			}
+
 			//calculate previous image 
 			int index1 = (row - 1) * PIXELS_PER_COL + col;
 			int index2 = row * PIXELS_PER_COL + col - 1;
@@ -69,29 +82,25 @@ namespace dvs {
 			int aa[4] = { index1, index2, index3, index4 };
 			int count3 = 0;
 			int count4 = 0;
-			for (int i = 0; i < 4; ++i)
-			{
-				if (aa[i] < 0 || aa[i] >= PIXELS_NUMBER)
-					continue;
-				if (m_matPreEventPicBuffer.ptr<uchar>(aa[i] / PIXELS_PER_COL)[aa[i] % PIXELS_PER_COL])
-					++count3;
-				else
-					++count4;
+			
+			for (int i = 0; i < 4; ++i) {
+				if (aa[i] < 0 || aa[i] >= PIXELS_NUMBER) continue;
+
+				if (m_matPreEventPicBuffer.ptr<uchar>(aa[i] / PIXELS_PER_COL)[aa[i] % PIXELS_PER_COL]) ++count3;
+				else ++count4;
 			}
-			if (count1 >= count2 || count3 >= count4)
-				return 255;
-			else
-				return 0;
+
+			if (count1 >= count2 || count3 >= count4) return 255;
+			else return 0;
 		}
 
-		static void setPreviousImage(const cv::Mat& img)
-		{
+		static void setPreviousImage(const cv::Mat& img) {
 			m_matPreEventPicBuffer = img.clone();
 		}
-
 	private:
 		static cv::Mat			m_matPreEventPicBuffer; //for denoise
 	};
+
 	cv::Mat	EventProcessing::m_matPreEventPicBuffer;
 }
 
@@ -105,14 +114,18 @@ namespace dvs {
 *  @author   :	xiongwc  2018/07/02 19:00
 *  @History  :
 *********************************************************/
-int dvs::segmentationByMultislice(const cv::Mat &multislicebyte, double ratio, cv::Mat &segimage)
-{
-	if (multislicebyte.empty())
-	{
-		return 0;
-	}
+int dvs::segmentationByMultislice(const cv::Mat &multislicebyte, double ratio, cv::Mat &segimage) {
+	if (multislicebyte.empty()) return 0;
+
 	segimage = cv::Mat::zeros(multislicebyte.size(), CV_8UC1);
+
+	// TODO: hier müsste CV_THRESH_BINARY durch THRESH_BINARY ersetzt werden bei OpenCV4
+#if COMPATIBILITY_VERSION == 2
 	cv::threshold(multislicebyte, segimage, ratio * 255, 255, CV_THRESH_BINARY);
+#else
+	cv::threshold(multislicebyte, segimage, ratio * 255, 255, THRESH_BINARY);
+#endif
+
 	return 1;
 }
 
@@ -126,12 +139,9 @@ int dvs::segmentationByMultislice(const cv::Mat &multislicebyte, double ratio, c
 *  @author   :  xiongwc  2018/07/02 20:00
 *  @History  :
 *********************************************************/
-int dvs::denoisingMaskByEventTime(const cv::Mat& countEventImg, double timelength, cv::Mat& denoiseMaskImg)
-{
-	if (countEventImg.empty())
-	{
-		return 0;
-	}
+int dvs::denoisingMaskByEventTime(const cv::Mat& countEventImg, double timelength, cv::Mat& denoiseMaskImg) {
+	if (countEventImg.empty()) return 0;
+
 	//cv::Mat kern = (cv::Mat_<uchar>(3, 3) << 0, 1, 0, 1, 1, 1, 0, 1, 0);//4-neighbor for convolution
 	//cv::Mat convimg;
 	//countEventImg.convertTo(convimg, CV_32FC1);
@@ -149,7 +159,13 @@ int dvs::denoisingMaskByEventTime(const cv::Mat& countEventImg, double timelengt
 
 	int timeslicecount = timelength / 60.0;//time step for density estimation, assigned by experience
 	int thresh = timeslicecount * 5;
+
+#if COMPATIBILITY_VERSION == 2
 	cv::threshold(convimg, denoiseMaskImg, thresh, 255, CV_THRESH_BINARY);
+#else
+	cv::threshold(convimg, denoiseMaskImg, thresh, 255, THRESH_BINARY);
+#endif
+
 	denoiseMaskImg.convertTo(denoiseMaskImg, CV_8UC1);
 	return 1;
 }
@@ -163,26 +179,21 @@ int dvs::denoisingMaskByEventTime(const cv::Mat& countEventImg, double timelengt
 *  @author   :  renh  2018/07/10 10:00
 *  @History  :
 *********************************************************/
-void dvs::denoisingByNeighborhood(const cv::Mat& countEventImg, cv::Mat& denoisedImg)
-{
+void dvs::denoisingByNeighborhood(const cv::Mat& countEventImg, cv::Mat& denoisedImg) {
 	const uchar* p;
 	uchar* q;
 	denoisedImg = cv::Mat::zeros(countEventImg.size(), CV_8UC1);
-	for (int i = 0; i < countEventImg.rows; ++i)
-	{
+
+	for (int i = 0; i < countEventImg.rows; ++i) {
 		p = countEventImg.ptr<uchar>(i);
 		q = denoisedImg.ptr<uchar>(i);
-		for (int j = 0; j < countEventImg.cols; ++j)
-		{
+		
+		for (int j = 0; j < countEventImg.cols; ++j) {
 			int score = p[j];
-			if (score > 0)
-			{
-				score = EventProcessing::calculateDenoiseScore(countEventImg, i, j);
-			}
-			else
-			{
-				score = 0;
-			}
+
+			if (score > 0) score = EventProcessing::calculateDenoiseScore(countEventImg, i, j);
+			else score = 0;
+
 			q[j] = score;
 		}
 	}

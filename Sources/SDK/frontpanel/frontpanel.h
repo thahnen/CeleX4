@@ -18,50 +18,42 @@
 #define FRONTPANEL_H
 
 #ifdef _WIN32
-#include <windows.h>
+	#include <windows.h>
 #else
-#include<unistd.h>
+	#include<unistd.h>
 #endif
+
 #include <iostream>
 #include <stdint.h>
 #include "okFrontPanelDLL.h"
 #include "../base/xbase.h"
 
-class FrontPanel
-{
+class FrontPanel {
 private:
-    FrontPanel() : mReady(false)
-    {
+    FrontPanel() : mReady(false) {
         myxem = new okCFrontPanel;              // xem
         mypll = new okCPLL22393;                // pll22393
     }
-
 public:
-    static FrontPanel* getInstance()
-    {
-        if (!spFrontPanel)
-            spFrontPanel = new FrontPanel;
+    static FrontPanel* getInstance() {
+        if (!spFrontPanel) spFrontPanel = new FrontPanel;
         return spFrontPanel;
     }
 
     void initializeFPGA(const std::string& bitfileName = "top.bit");
     void uninitializeFPGA();
     bool isReady() { return mReady; }
-
     bool wireIn(uint32_t address, uint32_t value, uint32_t mask);
     void wireOut(uint32_t address, uint32_t mask, uint32_t* pValue);
     long blockPipeOut(uint32_t address, int blockSize, long length, unsigned char *data);
 
-    void wait(int ms)
-    {
+    void wait(int ms) {
 #ifdef _WIN32
         Sleep(ms);
 #else
         usleep(1000*ms);
 #endif
     }
-
-public:
 
 private:
     bool               mReady;

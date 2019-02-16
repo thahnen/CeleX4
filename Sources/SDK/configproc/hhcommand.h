@@ -42,10 +42,8 @@ public:
     virtual void setValue(uint32_t value) = 0;
 
     virtual HHCommandBase* clone();
-
 protected:
     std::string     m_strName;
-
 private:
     bool            m_bValid;
     bool            m_bNeedsArg;

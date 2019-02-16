@@ -27,7 +27,6 @@ public:
     void execute();
     void setDuration(int duration);
     virtual void setValue(uint32_t value) override;
-
 private:
     int mDuration;
 };

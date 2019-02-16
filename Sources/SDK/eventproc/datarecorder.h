@@ -24,8 +24,7 @@
 
 using namespace std;
 
-class DataRecorder
-{
+class DataRecorder {
 public:
 	DataRecorder();
 	~DataRecorder();
@@ -35,7 +34,6 @@ public:
 	void stopRecording(uint32_t clock, int mode);
 	void writeData(unsigned char* pData, long length);
 	void writeData(vector<uint8_t> vecData);
-
 private:
 	bool           m_bRecording;
 	int            m_iTimeStampStart;

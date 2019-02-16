@@ -20,14 +20,13 @@
 #include <string>
 
 #ifdef _WIN32
-#include <windows.h>
-#include <process.h>
+	#include <windows.h>
+	#include <process.h>
 #else
-#include <pthread.h>
+	#include <pthread.h>
 #endif
 
-class XThread
-{
+class XThread {
 public:
     XThread(const std::string threadName = "newthread");
     virtual ~XThread();
@@ -44,9 +43,9 @@ public:
     unsigned int getThreadID();
     std::string getThreadName();
     void setThreadName(std::string threadName);
-
 private:
     bool createThread(bool bSuspended = false);
+
 #ifdef _WIN32
     static unsigned int WINAPI staticThreadFunc(void* args);
 #else
@@ -65,7 +64,8 @@ protected:
     pthread_t             m_threadID;
     pthread_mutex_t       m_mutex;
     pthread_cond_t        m_cond;
-#endif 
+#endif
+
 };
 
 #endif // XTHREAD_H

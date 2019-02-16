@@ -18,17 +18,17 @@
 #define CELEX_H
 
 #ifdef _WIN32
-#ifdef CELEX_API_EXPORTS
-#define CELEX_EXPORTS __declspec(dllexport)
+	#ifdef CELEX_API_EXPORTS
+		#define CELEX_EXPORTS __declspec(dllexport)
+	#else
+		#define CELEX_EXPORTS __declspec(dllimport)
+	#endif
 #else
-#define CELEX_EXPORTS __declspec(dllimport)
-#endif
-#else
-#if defined(CELEX_LIBRARY)
-#define CELEX_EXPORTS
-#else
-#define CELEX_EXPORTS
-#endif
+	#if defined(CELEX_LIBRARY)
+		#define CELEX_EXPORTS
+	#else
+		#define CELEX_EXPORTS
+	#endif
 #endif
 
 #include <stdint.h>
@@ -36,7 +36,31 @@
 #include <map>
 #include <list>
 #include <fstream>
-#include <opencv2/opencv.hpp>
+
+#ifndef COMPATIBILITY_VERSION
+	#ifdef __has_include
+		#if __has_include(<opencv/opencv2/opencv.hpp>)
+			#include <opencv/opencv2/opencv.hpp>
+			#define COMPATIBILITY_VERSION 4
+		#elif __has_include(<opencv2/opencv.hpp>)
+			#include <opencv2/opencv.hpp>
+			#define COMPATIBILITY_VERSION 2
+		#else
+			#error "Keine installierte OpenCV-Version gefunden!"
+		#endif
+	#else
+		#error "Nicht als C++17 kompiliert!"
+	#endif // __has_include
+#else
+	#if COMPATIBILITY_VERSION == 4
+		#include <opencv/opencv2/opencv.hpp>
+	#elif COMPATIBILITY_VERSION == 2
+		#include <opencv2/opencv.hpp>
+	#else
+		#error "Falsche OpenCV-Version oder Installation!"
+	#endif
+#endif // !COMPATIBILITY_VERSION
+
 #include "../celextypes.h"
 #define IMU_DATA_MAX_SIZE    1000
 
@@ -59,20 +83,18 @@ enum emEventPicMode {
 };
 
 //for bin file reader
-typedef struct BinFileAttributes
-{
+typedef struct BinFileAttributes {
 	int hour;
 	int minute;
 	int second;
 	emSensorMode mode;
 	long length;
-}BinFileAttributes;
+} BinFileAttributes;
 
-typedef struct FrameData
-{
+typedef struct FrameData {
 	std::vector<EventData> vecEventData;
 	uint64_t frameNo;
-}FrameData;
+} FrameData;
 
 typedef struct IMUData {
 	//int16_t       x_GYROS;
@@ -117,14 +139,15 @@ class CX4SensorDataServer;
 class EventProcessing;
 class FPGADataProcessor;
 class DataRecorder;
-class CELEX_EXPORTS CeleX4
-{
+
+class CELEX_EXPORTS CeleX4 {
 public:
 	enum emDeviceType {
 		Sensor = 0,
 		FPGA,
 		SensorAndFPGA
 	};
+
 	enum emAdvancedBiasType {
 		EVT_VL = 0,
 		EVT_VH,
@@ -143,6 +166,7 @@ public:
 		Clock,
 		Resolution
 	};
+
 	enum ErrorCode {
 		NoError = 0,
 		InitializeFPGAFailed,
@@ -158,15 +182,13 @@ public:
 		Replay
 	};
 
-	typedef struct TimeInfo
-	{
+	typedef struct TimeInfo {
 		int hour;
 		int minute;
 		int second;
 	} TimeInfo;
 
-	typedef struct ControlSliderInfo
-	{
+	typedef struct ControlSliderInfo {
 		std::string name;
 		uint32_t    min;
 		uint32_t    max;
@@ -266,6 +288,7 @@ public:
 	void stopRecording();
 	void startRecordingVideo(std::string filePath, std::string fullPicName, std::string eventName, int fourcc, double fps);
 	void stopRecordingVideo();
+
 	//--- Playback Interfaces ---
 	bool readPlayBackData(long length = 1968644);
 	bool openPlaybackFile(std::string filePath);
@@ -319,7 +342,6 @@ private:
 	bool setAdvancedBias(std::string strBiasName);
 	bool setAdvancedBias(std::string strBiasName, int value);
 	void autoAdjustBrightness();
-	//
 	bool openBinFile(std::string filePath);
 
 private:
