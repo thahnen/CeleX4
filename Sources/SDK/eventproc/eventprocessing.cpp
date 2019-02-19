@@ -26,17 +26,17 @@
 			#error "Keine installierte OpenCV-Version gefunden!"
 		#endif
 	#else
-		#error "Nicht als C++17 kompiliert!"
-	#endif // __has_include
+		// Not compiled with C++17 so just use the new one!
+		#include <opencv/opencv2/opencv.hpp>
+		#define COMPATIBILITY_VERSION 4
+	#endif
 #else
 	#if COMPATIBILITY_VERSION == 4
 		#include <opencv/opencv2/opencv.hpp>
-	#elif COMPATIBILITY_VERSION == 2
-		#include <opencv2/opencv.hpp>
 	#else
-		#error "Falsche OpenCV-Version oder Installation!"
+		#include <opencv2/opencv.hpp>
 	#endif
-#endif // !COMPATIBILITY_VERSION
+#endif
 
 #include "../include/celextypes.h"
 #include "../include/dvslib/eventproc.h"
@@ -142,22 +142,11 @@ int dvs::segmentationByMultislice(const cv::Mat &multislicebyte, double ratio, c
 int dvs::denoisingMaskByEventTime(const cv::Mat& countEventImg, double timelength, cv::Mat& denoiseMaskImg) {
 	if (countEventImg.empty()) return 0;
 
-	//cv::Mat kern = (cv::Mat_<uchar>(3, 3) << 0, 1, 0, 1, 1, 1, 0, 1, 0);//4-neighbor for convolution
-	//cv::Mat convimg;
-	//countEventImg.convertTo(convimg, CV_32FC1);
-	//cv::filter2D(convimg, convimg, convimg.depth(), kern);
-
-	//int timeslicecount = timelength / 800;//time step for density estimation, assigned by experience
-	//int thresh = timeslicecount * 3;
-	//cv::threshold(convimg, denoiseMaskImg, thresh, 255, CV_THRESH_BINARY);
-	//denoiseMaskImg.convertTo(denoiseMaskImg, CV_8UC1);
-	//return 1;
-
 	cv::Mat kern = (cv::Mat_<uchar>(3, 3) << 1, 1, 1, 1, 1, 1, 1, 1, 1);
 	cv::Mat convimg;
 	cv::filter2D(countEventImg, convimg, countEventImg.depth(), kern);
 
-	int timeslicecount = timelength / 60.0;//time step for density estimation, assigned by experience
+	int timeslicecount = timelength/60.0; //time step for density estimation, assigned by experience
 	int thresh = timeslicecount * 5;
 
 #if COMPATIBILITY_VERSION == 2

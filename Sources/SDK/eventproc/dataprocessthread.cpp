@@ -51,10 +51,10 @@ void DataProcessThread::setPlaybackState(CeleX4::PlaybackState state) {
 
 void DataProcessThread::run() {
 	while (m_bRun) {
-		//cout << "---------- DataProcessThread::run ----------" << endl;
 
 #ifndef _WIN32
 		pthread_mutex_lock(&m_mutex);
+
 		while (m_bSuspended) {
 			pthread_cond_wait(&m_cond, &m_mutex);
 		}

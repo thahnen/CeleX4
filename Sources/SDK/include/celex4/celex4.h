@@ -49,17 +49,17 @@
 			#error "Keine installierte OpenCV-Version gefunden!"
 		#endif
 	#else
-		#error "Nicht als C++17 kompiliert!"
-	#endif // __has_include
+		// Not compiled with C++17 so just use the new one!
+		#include <opencv/opencv2/opencv.hpp>
+		#define COMPATIBILITY_VERSION 4
+	#endif
 #else
 	#if COMPATIBILITY_VERSION == 4
 		#include <opencv/opencv2/opencv.hpp>
-	#elif COMPATIBILITY_VERSION == 2
-		#include <opencv2/opencv.hpp>
 	#else
-		#error "Falsche OpenCV-Version oder Installation!"
+		#include <opencv2/opencv.hpp>
 	#endif
-#endif // !COMPATIBILITY_VERSION
+#endif
 
 #include "../celextypes.h"
 #define IMU_DATA_MAX_SIZE    1000
@@ -77,9 +77,7 @@ enum emEventPicMode {
 	EventSuperimposedPic = 3,
 	EventDenoisedBinaryPic = 4,
 	EventDenoisedGrayPic = 5,
-	EventCountPic = 6,
-	//EventDenoisedByTimeBinaryPic = 7,
-	//EventDenoisedByTimeGrayPic = 8
+	EventCountPic = 6
 };
 
 //for bin file reader
@@ -97,22 +95,6 @@ typedef struct FrameData {
 } FrameData;
 
 typedef struct IMUData {
-	//int16_t       x_GYROS;
-	//int16_t       y_GYROS;
-	//int16_t       z_GYROS;
-	//uint32_t      t_GYROS;
-	//int16_t       x_ACC;
-	//int16_t       y_ACC;
-	//int16_t       z_ACC;
-	//uint32_t      t_ACC;
-	//int16_t       x_GYROS_OFST;
-	//int16_t       y_GYROS_OFST;
-	//int16_t       z_GYROS_OFST;
-	//uint32_t      t_GYROS_OFST;
-	//int16_t       x_ACC_OFST;
-	//int16_t       y_ACC_OFST;
-	//int16_t       z_ACC_OFST;
-	//uint32_t      t_ACC_OFST;
 	double			x_GYROS;
 	double			y_GYROS;
 	double			z_GYROS;
@@ -226,7 +208,7 @@ public:
 
 	//---------------------------------------------------------------------------------------------test
 	void setVecSizeAndOverlap(unsigned long vecSize, unsigned long overlap);
-	bool getFixedNumEventDataVec(/*long length, long overlapLen, */std::vector<EventData> &vector, uint64_t& frameNo);
+	bool getFixedNumEventDataVec(std::vector<EventData> &vector, uint64_t& frameNo);
 
 	void setThreshold(uint32_t value);
 	uint32_t getThreshold();

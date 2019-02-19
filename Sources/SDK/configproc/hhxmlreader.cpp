@@ -72,7 +72,6 @@ bool HHXmlReader::importCommands(std::vector<HHCommandBase *> &commandList, TiXm
                     string tagName = pNode->Value();
                     uint32_t value;
                     getNumber(pNode->FirstChild()->Value(), &value);
-                    //cout << "------- " << pNode->Value() << " " << pNode->FirstChild()->Value() << " " << value << endl;
                     
 					if ("address" == tagName) {
                         pCmd->setAddress(value);
@@ -95,7 +94,6 @@ bool HHXmlReader::importCommands(std::vector<HHCommandBase *> &commandList, TiXm
                     string tagName = pNode->Value();
                     uint32_t value;
                     bool bOk = getNumber(pNode->FirstChild()->Value(), &value);
-                    //cout << "------- " << pNode->Value() << " " << pNode->FirstChild()->Value() << " " << value << endl;
                     
 					if (!bOk) {
                         //--- invalid value ---
@@ -162,7 +160,6 @@ bool HHXmlReader::importSequences(HHSequenceMgr *pSeqMgr, std::vector<HHSequence
             if ("command" == commandName || "system" == commandName) {
                 string keyName = pChildEle->FirstAttribute()->Name();
                 string value = pChildEle->FirstAttribute()->Value();
-                //cout << "------- " "keyName = " << keyName << "; value = " << value << endl;
                 HHCommandBase* pCmd = NULL;
 
                 if ("command" == commandName) {
@@ -257,7 +254,6 @@ bool HHXmlReader::importSliders(HHSequenceMgr *pSeqMgr, std::vector<HHSequence *
 
             while (NULL != pAttr) {
                 mapElement[pAttr->Name()] = pAttr->Value();
-                //cout << "------- " << pAttr->Name() << ": " << pAttr->Value() << endl;
                 pAttr = pAttr->Next();
             }
 

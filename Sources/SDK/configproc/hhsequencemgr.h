@@ -24,8 +24,7 @@
 
 class HHCommandBase;
 
-class HHSequence
-{
+class HHSequence {
 public:
     HHSequence(const std::string& name);
     virtual ~HHSequence();
@@ -50,8 +49,7 @@ protected:
     std::vector<HHCommandBase*> mCommands;
 };
 
-class HHSequenceSlider : public HHSequence
-{
+class HHSequenceSlider : public HHSequence {
 public:
     HHSequenceSlider(const std::string& name, uint32_t min, uint32_t max, uint32_t step);
 
@@ -70,8 +68,7 @@ private:
     uint32_t mStep;
 };
 
-class HHSequenceMgr
-{
+class HHSequenceMgr {
 public:
     HHSequenceMgr();
     ~HHSequenceMgr();

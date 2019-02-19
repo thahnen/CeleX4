@@ -24,7 +24,7 @@
 		#define CELEX_EXPORTS __declspec(dllimport)
 	#endif
 #else
-	#if defined(CELEX_LIBRARY)
+	#ifdef CELEX_LIBRARY
 		#define CELEX_EXPORTS
 	#else
 		#define CELEX_EXPORTS
@@ -44,21 +44,20 @@
 			#error "Keine installierte OpenCV-Version gefunden!"
 		#endif
 	#else
-		#error "Nicht als C++17 kompiliert!"
-	#endif // __has_include
+		// Not compiled with C++17 so just use the new one!
+		#include <opencv/opencv2/opencv.hpp>
+		#define COMPATIBILITY_VERSION 4
+	#endif
 #else
 	#if COMPATIBILITY_VERSION == 4
 		#include <opencv/opencv2/opencv.hpp>
-	#elif COMPATIBILITY_VERSION == 2
-		#include <opencv2/opencv.hpp>
 	#else
-		#error "Falsche OpenCV-Version oder Installation!"
+		#include <opencv2/opencv.hpp>
 	#endif
-#endif // !COMPATIBILITY_VERSION
+#endif
 
 
 namespace dvs {
-	//for eventprocessing---------TEST----------------------------------------------------------------------
 	CELEX_EXPORTS int segmentationByMultislice(const cv::Mat& multislicebyte, double ratio, cv::Mat& segimage);
 	CELEX_EXPORTS int denoisingMaskByEventTime(const cv::Mat& countEventImg, double timelength, cv::Mat& denoiseMaskImg);
 	CELEX_EXPORTS void denoisingByNeighborhood(const cv::Mat& countEventImg, cv::Mat& denoisedImg);

@@ -20,21 +20,20 @@
 XThread::XThread(const std::string threadName) : m_threadName(threadName), m_threadID(0)
 												, m_bRun(false), m_bSuspended(false)
 #ifndef _WIN32
-    , m_mutex(PTHREAD_MUTEX_INITIALIZER)
-    , m_cond(PTHREAD_COND_INITIALIZER)
+    , m_mutex(PTHREAD_MUTEX_INITIALIZER), m_cond(PTHREAD_COND_INITIALIZER)
 #endif
 { }
 
 XThread::~XThread() { }
 
 //Create a thread and run (default) or hang
-bool XThread::start(bool bSuspend/* = false*/) {
+bool XThread::start(bool bSuspend) {
     m_bRun = createThread(bSuspend);
     return m_bRun;
 }
 
 //Create a thread and run (default) or hang
-bool XThread::createThread(bool bSuspend/* = false*/) {
+bool XThread::createThread(bool bSuspend) {
     if(!m_bRun) {
 
 #ifdef _WIN32

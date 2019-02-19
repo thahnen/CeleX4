@@ -16,7 +16,6 @@
 
 #include "datareaderthread.h"
 #include <iostream>
-//#include <Windows.h>
 #include "../include/celex4/celex4.h"
 
 using namespace std;
@@ -28,18 +27,9 @@ DataReaderThread::~DataReaderThread() { }
 void DataReaderThread::startReadData(bool bRead) { m_bPipeoutAllowed = bRead; }
 
 void DataReaderThread::run() {
-    while (m_bRun) {
-        //cout << "---------- DataReaderThread::run ----------" << endl;
-		//::EnterCriticalSection(&m_pCelexSensor->m_criticalSection);
-        if (m_bPipeoutAllowed) {
-            //if (!m_pCelexSensor->isSdramFull())
-            {
-                m_pCelexSensor->pipeOutFPGAData();
-            }
-        }
-        //::LeaveCriticalSection(&m_pCelexSensor->m_criticalSection);
-        //Sleep(20);
-    }
+	while (m_bRun) {
+		if (m_bPipeoutAllowed) { m_pCelexSensor->pipeOutFPGAData(); }
+	}
 }
 
 

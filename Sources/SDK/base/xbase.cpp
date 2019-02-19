@@ -32,7 +32,6 @@ XBase::XBase() { }
 XBase::~XBase(){ }
 
 std::string XBase::getApplicationDirPath() {
-    //D:\\Work\\build-okBaseTest-Desktop_Qt_5_9_1_MinGW_32bit-Debug\\debug\\okBaseTest.exe
 
 #ifdef _WIN32
     char path[1024];
@@ -46,9 +45,7 @@ std::string XBase::getApplicationDirPath() {
     int cnt = readlink("/proc/self/exe", path, 1024);
 	cout << "XBase::getApplicationDirPath: readlink count = " << cnt << endl;
     
-	if(cnt < 0|| cnt >= 1024) {
-        return NULL;
-    }
+	if(cnt < 0|| cnt >= 1024) return NULL;
 
     for(int i = cnt; i >= 0; --i) {
         if(path[i]=='/') {
@@ -113,7 +110,6 @@ int XBase::getTimeStamp() {
 }
 
 bool XBase::isFileExists(std::string filePath) {
-    //"D:/Work/build-okBaseTest-Desktop_Qt_5_9_1_MinGW_32bit-Debug/debug/top.bit";
     printf("XBase::isFileExists: %s", filePath.c_str());
     fstream _file;
     _file.open(filePath.c_str(), ios::in);

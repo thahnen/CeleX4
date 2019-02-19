@@ -30,18 +30,10 @@
 
 // This is the constructor of a class that has been exported.
 // see CelexSensorDLL.h for the class definition
-CeleX4::CeleX4()
-	: m_uiFullPicFrameTime(20)
-	, m_uiEventFrameTime(60)
-	, m_uiFEFrameTime(60)
-	, m_uiOverlapTime(0)
-	, m_uiClockRate(25)
-	, m_lPlaybackFileSize(0)
-	, m_bReadDataByAPICore(false)
-	, m_bAutoAdjustBrightness(false)
-    , m_bRecordingVideo(false)
-	, m_pReadBuffer(NULL)
-{
+CeleX4::CeleX4() : m_uiFullPicFrameTime(20), m_uiEventFrameTime(60), m_uiFEFrameTime(60)
+					, m_uiOverlapTime(0), m_uiClockRate(25), m_lPlaybackFileSize(0)
+					, m_bReadDataByAPICore(false), m_bAutoAdjustBrightness(false), m_bRecordingVideo(false)
+					, m_pReadBuffer(NULL) {
 	m_pFrontPanel = FrontPanel::getInstance();
 
 	m_pSequenceMgr = new HHSequenceMgr;
@@ -60,291 +52,228 @@ CeleX4::CeleX4()
 	m_pDataReaderThread = new DataReaderThread(this);
 }
 
-CeleX4::~CeleX4()
-{
-	if (m_ifstreamPlayback.is_open())
-		m_ifstreamPlayback.close();
+CeleX4::~CeleX4() {
+	if (m_ifstreamPlayback.is_open()) m_ifstreamPlayback.close();
 
-	if (m_pSequenceMgr)
-	{
-		delete m_pSequenceMgr;
-	}
-	if (m_pDataProcessThread)
-	{
+	if (m_pSequenceMgr) delete m_pSequenceMgr;
+
+	if (m_pDataProcessThread) {
 		m_pDataProcessThread->terminate();
 		delete m_pDataProcessThread;
 	}
-	if (m_pFrontPanel)
-	{
+
+	if (m_pFrontPanel) {
 		m_pFrontPanel->uninitializeFPGA();
 		delete m_pFrontPanel;
 	}
-	if (m_pReadBuffer)
-	{
+
+	if (m_pReadBuffer) {
 		delete[] m_pReadBuffer;
 		m_pReadBuffer = NULL;
 	}
 }
 
-CeleX4::ErrorCode CeleX4::openSensor(string str)
-{
+CeleX4::ErrorCode CeleX4::openSensor(string str) {
 	m_pFrontPanel->initializeFPGA("top.bit");
-	if (isSensorReady())
-	{
-		if (!powerUp())
-			return CeleX4::PowerUpFailed;
-		if (!configureSettings())
-			return CeleX4::ConfigureFailed;
 
-		//cout << "****************************************" << endl;
-		//excuteCommand("SetMode Total Time");
+	if (isSensorReady()) {
+		if (!powerUp()) return CeleX4::PowerUpFailed;
+		
+		if (!configureSettings()) return CeleX4::ConfigureFailed;
+
 		setFEFrameTime(60);
 		setFullPicFrameTime(40);
 
-		if (m_bReadDataByAPICore)
-		{
+		if (m_bReadDataByAPICore) {
 			m_pDataReaderThread->startReadData(true);
 			m_pDataReaderThread->start();
 		}
-	}
-	else
-	{
+	} else {
 		return CeleX4::InitializeFPGAFailed;
 	}
+
 	return CeleX4::NoError;
 }
 
 // Execute Sensor Power-up Sequence
-bool CeleX4::powerUp()
-{
+bool CeleX4::powerUp() {
 	bool bSuccess = false;
 	std::string sPowerUp = "Power Up";
-	if (HHSequence* pUpSeq = m_pSequenceMgr->getSequenceByName(sPowerUp))
-	{
-		if (!pUpSeq->fire())
-			cout << "Power Up failed." << endl;
-		else
-			bSuccess = true;
-	}
-	else
-	{
+	
+	if (HHSequence* pUpSeq = m_pSequenceMgr->getSequenceByName(sPowerUp)) {
+		if (!pUpSeq->fire()) cout << "Power Up failed." << endl;
+		else bSuccess = true;
+	} else {
 		cout << sPowerUp << ": Sequence not defined." << endl;
 	}
+
 	return bSuccess;
 }
 
-bool CeleX4::configureSettings()
-{
+bool CeleX4::configureSettings() {
 	bool bOk = false;
 	std::string settingNames;
-	if (m_pFrontPanel->isReady())
-	{
+
+	if (m_pFrontPanel->isReady()) {
 		bOk = true;
 		int index = 0;
-		for (vector<string>::iterator itr = m_vecAdvancedNames.begin(); itr != m_vecAdvancedNames.end(); itr++)
-		{
+
+		for (vector<string>::iterator itr = m_vecAdvancedNames.begin(); itr != m_vecAdvancedNames.end(); itr++) {
 			bool ret = setAdvancedBias(m_vecAdvancedNames.at(index));
-			if (!ret)
-				settingNames += (" " + (*itr));
+			
+			if (!ret) settingNames += (" " + (*itr));
+			
 			bOk = (bOk && ret);
 			++index;
 		}
 	}
-	if (bOk)
-		cout << "Configure Advanced Settings Successfully!" << endl;
-	else
-		cout << "Configure Advanced Settings Failed @" << settingNames << endl;
+
+	if (bOk) cout << "Configure Advanced Settings Successfully!" << endl;
+	else cout << "Configure Advanced Settings Failed @" << settingNames << endl;
+	
 	return bOk;
 }
 
-bool CeleX4::isSensorReady()
-{
-	return m_pFrontPanel->isReady();
-}
+bool CeleX4::isSensorReady() { return m_pFrontPanel->isReady(); }
 
-bool CeleX4::isSdramFull()
-{
+bool CeleX4::isSdramFull() {
 	uint32_t sdramFull;
 	FrontPanel::getInstance()->wireOut(0x20, 0x0001, &sdramFull);
-	if (sdramFull > 0)
-	{
+	
+	if (sdramFull > 0) {
 		cout << "---- SDRAM is full! -----" << endl;
 		return true;
 	}
+
 	return false;
 }
 
-void CeleX4::pipeOutFPGAData()
-{
-	if (!isSensorReady())
-	{
-		return;
-	}
+void CeleX4::pipeOutFPGAData() {
+	if (!isSensorReady()) return;
+
 	uint32_t pageCount;
 	m_pFrontPanel->wireOut(0x21, 0x1FFFFF, &pageCount);
-	if (pageCount > MAX_PAGE_COUNT)
-		pageCount = MAX_PAGE_COUNT;
+	
+	if (pageCount > MAX_PAGE_COUNT) pageCount = MAX_PAGE_COUNT;
+	
 	m_uiPageCount = pageCount;
-	//cout << "-------------- pageCount = " << pageCount << endl;
 	int blockSize = 128;
 	long length = (long)(pageCount * blockSize);
-	if (NULL == m_pReadBuffer)
-		m_pReadBuffer = new unsigned char[128 * MAX_PAGE_COUNT];
+	
+	if (NULL == m_pReadBuffer) m_pReadBuffer = new unsigned char[128 * MAX_PAGE_COUNT];
+	
 	//Return the number of bytes read or ErrorCode (<0) if the read failed. 
 	long dataLen = m_pFrontPanel->blockPipeOut(0xa0, blockSize, length, m_pReadBuffer);
-	if (dataLen > 0)
-	{
+	
+	if (dataLen > 0) {
 		//record sensor data
-		if (m_pDataRecorder->isRecording())
-		{
-			m_pDataRecorder->writeData(m_pReadBuffer, dataLen);
-		}
-		if (getPlaybackState() == CeleX4::NoBinPlaying)
-			m_pDataProcessThread->addData(m_pReadBuffer, dataLen);
-	}
-	else if (dataLen < 0) //read failed
-	{
-		switch (dataLen)
-		{
+		if (m_pDataRecorder->isRecording()) m_pDataRecorder->writeData(m_pReadBuffer, dataLen);
+
+		if (getPlaybackState() == CeleX4::NoBinPlaying) m_pDataProcessThread->addData(m_pReadBuffer, dataLen);
+	} else if (dataLen < 0) {
+		// read failed
+		switch (dataLen) {
 		case okCFrontPanel::InvalidBlockSize:
 			cout << "Block Size Not Supported" << endl;
 			break;
-
 		case okCFrontPanel::UnsupportedFeature:
 			cout << "Unsupported Feature" << endl;
 			break;
-
 		default:
 			cout << "Transfer Failed with error: " << dataLen << endl;
 			break;
 		}
 		cout << "pageCount = " << pageCount << ", blockSize = " << blockSize << ", length = " << length << endl;
 	}
-	if (m_bAutoAdjustBrightness)
-		autoAdjustBrightness();
+
+	if (m_bAutoAdjustBrightness) autoAdjustBrightness();
 }
 
-long CeleX4::getFPGADataSize()
-{
-	if (!isSensorReady())
-	{
-		return -1;
-	}
+long CeleX4::getFPGADataSize() {
+	if (!isSensorReady()) return -1;
+
 	uint32_t pageCount;
 	m_pFrontPanel->wireOut(0x21, 0x1FFFFF, &pageCount);
 	m_uiPageCount = pageCount;
-	//cout << "----------- pageCount = " << pageCount << endl; 
 	return 128 * pageCount;
 }
 
-long CeleX4::readDataFromFPGA(long length, unsigned char *data)
-{
-	if (!data)
-		return -1;
-	if (!isSensorReady())
-	{
-		return -1;
-	}
+long CeleX4::readDataFromFPGA(long length, unsigned char *data) {
+	if (!data) return -1;
+
+	if (!isSensorReady()) return -1;
+
 	uint32_t pageCount;
 	m_pFrontPanel->wireOut(0x21, 0x1FFFFF, &pageCount);
 	m_uiPageCount = pageCount;
-	//cout << "----------- pageCount = " << pageCount << endl;
+	
 	int blockSize = 128;
-	//Return the number of bytes read or ErrorCode (<0) if the read failed. 
 	long dataLen = m_pFrontPanel->blockPipeOut(0xa0, blockSize, length, data);
-	if (dataLen > 0)
-	{
+	
+	if (dataLen > 0) {
 		return dataLen;
-	}
-	else if (dataLen < 0) //read failed
-	{
-		switch (dataLen)
-		{
+	} else if (dataLen < 0) {
+		// read failed
+		switch (dataLen) {
 		case okCFrontPanel::InvalidBlockSize:
 			cout << "Block Size Not Supported: " << dataLen << endl;
 			break;
-
 		case okCFrontPanel::UnsupportedFeature:
 			cout << "Unsupported Feature: " << dataLen << endl;
 			break;
-
 		default:
 			cout << "Transfer Failed with error: " << dataLen << endl;
 			break;
 		}
 	}
+
 	return -1;
 }
 
-unsigned char *CeleX4::getFullPicBuffer()
-{
+unsigned char *CeleX4::getFullPicBuffer() {
 	CeleX4ProcessedData* pSensorData = getSensorDataObject();
-	if (!pSensorData)
-	{
-		return NULL;
-	}
+	
+	if (!pSensorData) return NULL;
+
 	return pSensorData->getFullPicBuffer();
 }
 
-unsigned char *CeleX4::getEventPicBuffer(emEventPicMode mode)
-{
+unsigned char *CeleX4::getEventPicBuffer(emEventPicMode mode) {
 	CeleX4ProcessedData* pSensorData = getSensorDataObject();
-	if (!pSensorData)
-	{
-		return NULL;
-	}
-	if (EventAccumulatedPic == mode ||
-		EventBinaryPic == mode ||
-		EventGrayPic == mode ||
-		EventSuperimposedPic == mode ||
-		EventDenoisedBinaryPic == mode ||
-		EventDenoisedGrayPic == mode ||
-		EventCountPic == mode /*||
-		EventDenoisedByTimeBinaryPic == mode ||
-		EventDenoisedByTimeGrayPic == mode*/)
-	{
+	
+	if (!pSensorData) return NULL;
+
+	if (EventAccumulatedPic == mode || EventBinaryPic == mode || EventGrayPic == mode ||
+		EventSuperimposedPic == mode || EventDenoisedBinaryPic == mode ||
+		EventDenoisedGrayPic == mode || EventCountPic == mode) {
 		return pSensorData->getEventPicBuffer(mode);
-	}
-	else
-	{
+	} else {
 		return NULL;
 	}
 }
 
 //golbal reset length
 //address:0x05, mask: 31:12
-void CeleX4::setResetLength(uint32_t value)
-{
-	//--- excuteCommand("SetMode Global Reset Length"); ---
+void CeleX4::setResetLength(uint32_t value) {
 	value = value << 12;
 	FrontPanel::getInstance()->wireIn(0x05, value, 0xFFFFF000);
 	FrontPanel::getInstance()->wait(1);
 	cout << "Address: " << 0x05 << "; Value: " << value << "; Mask: " << 0xFFFFF000 << endl;
 }
 
-void CeleX4::clearData()
-{
-	m_pDataProcessThread->clearData();
-}
+void CeleX4::clearData() { m_pDataProcessThread->clearData(); }
 
 // Execute Sensor "Event Mode"/"Full Picture" Sequence
-void CeleX4::setSensorMode(emSensorMode mode)
-{
-	if (!m_pFrontPanel->isReady())
-		return;
+void CeleX4::setSensorMode(emSensorMode mode) {
+	if (!m_pFrontPanel->isReady()) return;
 
-	if (mode == EventMode)
-	{
+	if (mode == EventMode) {
 		excuteCommand("Full Picture");
 		m_pDataProcessThread->setSensorMode(mode);
-	}
-	else if (mode == FullPictureMode)
-	{
+	} else if (mode == FullPictureMode) {
 		excuteCommand("Event Mode");
 		m_pDataProcessThread->setSensorMode(mode);
-	}
-	else //AC or AB or ABC Mode
-	{
+	} else {
 		excuteCommand("Optical Mode");
 		m_pDataProcessThread->setSensorMode(mode);
 	}
@@ -1256,17 +1185,14 @@ void CeleX4::setIMUIntervalTime(uint32_t value)
 	cout << "Address: " << 0x02 << "; Value: " << value << "; Mask: " << 0xFF000000 << endl;
 }
 
-int CeleX4::getIMUData(std::vector<IMUData>& data)
-{
+int CeleX4::getIMUData(std::vector<IMUData>& data) {
 	return m_pDataProcessThread->getDataProcessor()->getIMUData(data);
 }
 
-bool CeleX4::denoisingByTimeInterval(std::vector<EventData> vec, cv::Mat &mat)
-{
+bool CeleX4::denoisingByTimeInterval(std::vector<EventData> vec, cv::Mat &mat) {
 	return m_pDataProcessThread->getDataProcessor()->denoisingByTimeInterval(vec, mat);
 }
 
-bool CeleX4::denoisingAndCompresing(std::vector<EventData> vec, float compressRatio, cv::Mat &mat)
-{
+bool CeleX4::denoisingAndCompresing(std::vector<EventData> vec, float compressRatio, cv::Mat &mat) {
 	return m_pDataProcessThread->getDataProcessor()->denoisingAndCompresing(vec, compressRatio, mat);
 }

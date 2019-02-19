@@ -40,7 +40,6 @@ private:
     DataQueue                m_queueData;
     FPGADataProcessor        m_dataProcessor;
     unsigned char*           m_pData;
-    //CirDataQueueEx           m_queueDataEx;
     CeleX4::PlaybackState    m_emPlaybackState;
 	bool					 m_bPlaybackBinFile;
 };

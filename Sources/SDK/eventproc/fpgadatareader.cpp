@@ -30,7 +30,9 @@ unsigned int FPGADataReader::getColumn(unsigned char data[EVENT_SIZE]) {
 	unsigned int last7bit = 0;
 	last7bit += static_cast<unsigned char>(data[0]) & 0x7F;
 	unsigned int result = last7bit + ((static_cast<unsigned char>(data[1]) & 0x30) << 3);
+
 	if ((data[1] & 0x40) != 0) result = PIXELS_PER_COL - 1 - result;
+	
 	return result;
 }
 
@@ -71,7 +73,9 @@ bool FPGADataReader::isForcefirePixel(unsigned char data[EVENT_SIZE]) { //column
 // Byte 3: {8'b0}
 bool FPGADataReader::isColumnEvent(unsigned char data[EVENT_SIZE]) {
 	bool result = (((unsigned char)data[0] & 0x80) == 0);
+	
 	if (result) s_uiEventType = (unsigned int)((unsigned char)data[3] & 0x03);
+	
 	return result;
 }
 
@@ -80,11 +84,8 @@ bool FPGADataReader::isColumnEvent(unsigned char data[EVENT_SIZE]) {
 // Byte 2: {1'b1, T[10:4]}
 // Byte 3: {1'b1, T[17:11]}
 bool FPGADataReader::isRowEvent(unsigned char data[EVENT_SIZE]) {
-	return (((unsigned char)data[0] & 0x80) > 0 &&
-			((unsigned char)data[1] & 0x80) > 0 &&
-			((unsigned char)data[2] & 0x80) > 0 &&
-			((unsigned char)data[3] & 0xC0) == 0x80);
-	//return ((unsigned char)data[0] & 0x80) > 0 && !isSpecialEvent(data);
+	return (((unsigned char)data[0] & 0x80) > 0 && ((unsigned char)data[1] & 0x80) > 0 &&
+			((unsigned char)data[2] & 0x80) > 0 && ((unsigned char)data[3] & 0xC0) == 0x80);
 }
 
 // Byte 0: {8'b1}
@@ -98,10 +99,9 @@ bool FPGADataReader::isSpecialEvent(unsigned char data[EVENT_SIZE]) {
 	unsigned char d = (unsigned char)data[3];
 
 	bool result = (d == 0xff && b == 0xff && c == 0xff);
-	if (result) {
-		s_uiSpecialEventType = (unsigned int)(d & 0x03);
-		//std::cout << "special no = " << int(a) << std::endl;
-	}
+
+	if (result) s_uiSpecialEventType = (unsigned int)(d & 0x03);
+
 	return result;
 }
 
@@ -112,6 +112,7 @@ unsigned int FPGADataReader::MapTime(unsigned char data[EVENT_SIZE]) {
 		s_uiCurrentRow = getRow(data);
 		s_uiTFromFPGA = getTimeStamp(data);
 	}
+
 	return 1;
 }
 
@@ -122,15 +123,11 @@ unsigned int FPGADataReader::MapTime(unsigned char data[EVENT_SIZE]) {
 // Flag_ACC_B[4:0]=5'b11_101
 FPGADataReader::IMUDATAType FPGADataReader::isIMUData(unsigned char data[4]) {
 	if ((data[0] & 0x80) == 0x80 && (data[1] & 0x80) == 0 && (data[2] & 0x80) == 0x80) {
-		//return FPGADataReader::GYROS_A_DATA;
 		//Flag_GYROS_A[4:0]={GYROS_A[31:30], GYROS_A[23], GYROS_A[15], GYROS_A[7]}
 		if (0x00 == (data[3] & 0xC0)) {
-			//std::cout << "---------- IMU Data ----------" << std::endl;
 			s_IMUData.x_GYROS = getIMU_X(data) * resolution;
-			//std::cout << "GYROS_DATA: x_GYROS = " << s_IMUData.x_GYROS;
 
 			if (isGetFixedVec) {
-				//std::cout << "s_uiEventTCounter: " << s_uiEventTCounter << std::endl;
 				s_IMUData.t_GYROS = s_uiFixedEventTCounter;
 				s_IMUData.frameNo = g_ulFixedEventNo;
 			} else {
@@ -142,59 +139,39 @@ FPGADataReader::IMUDATAType FPGADataReader::isIMUData(unsigned char data[4]) {
 		} else if (0x40 == (data[3] & 0xC0)) {
 			s_IMUData.y_GYROS = getIMU_Y(data) * resolution;
 			s_IMUData.z_GYROS = getIMU_Z(data) * resolution;
-			//s_IMUData.t_GYROS = getIMU_T(data);
-			//s_IMUData.t_GYROS = s_uiEventTCounter;
-			//s_IMUData.frameNo = g_ulEventFrameNo + 1;
-			//std::cout << "-----------------------------------" << s_uiEventTCounter << std::endl;
-			//std::cout << ", y_GYROS = " << s_IMUData.y_GYROS << ", z_GYROS = " << s_IMUData.z_GYROS << std::endl;
-			//std::cout << "t_GYROS = " << s_IMUData.t_GYROS << std::endl;
 			return FPGADataReader::GYROS_B_DATA;
 		} else if (0x80 == (data[3] & 0xC0)) {
 			s_IMUData.x_ACC = getIMU_X(data) * accResolution;
-			//std::cout << "ACC_DATA: x_ACC = " << s_IMUData.x_ACC;
 			return FPGADataReader::ACC_A_DATA;
 		} else if (0xC0 == (data[3] & 0xC0)) {
 			s_IMUData.y_ACC = getIMU_Y(data) * accResolution;
 			s_IMUData.z_ACC = getIMU_Z(data) * accResolution;
-			//s_IMUData.t_ACC = getIMU_T(data);
+
 			if (isGetFixedVec) s_IMUData.t_ACC = s_uiFixedEventTCounter;
 			else s_IMUData.t_ACC = s_uiEventTCounter;
 
-			//std::cout << ", y_ACC = " << s_IMUData.y_ACC << ", z_ACC = " << s_IMUData.z_ACC << std::endl;
-			//std::cout << "t_ACC = " << s_IMUData.t_ACC << std::endl;
 			return FPGADataReader::ACC_B_DATA;
 		}
 	} else if ((data[0] & 0x80) == 0 && (data[1] & 0x80) == 0 && (data[2] & 0x80) == 0x80) {
 		if (0x00 == (data[3] & 0xC0)) {
-			//std::cout << "---------- IMU Data OFST ----------" << std::endl;
 			s_IMUData.x_MAG = getIMU_X(data) * magResolution;
-			//std::cout << "GYROS_DATA: x_GYROS_OFST = " << s_IMUData.x_GYROS_OFST;
-			//std::cout << "magResolution = " << magResolution << std::endl;
 			return FPGADataReader::GYROS_OFST_A_DATA;
 		} else if (0x40 == (data[3] & 0xC0)) {
 			s_IMUData.y_MAG = getIMU_Y(data) * magResolution;
 			s_IMUData.z_MAG = getIMU_Z(data) * magResolution;
-			//s_IMUData.t_GYROS_OFST = getIMU_T(data);
 
 			if (isGetFixedVec) s_IMUData.t_MAG = s_uiFixedEventTCounter;
 			else s_IMUData.t_MAG = s_uiEventTCounter;
-			//std::cout << ", y_GYROS_OFST = " << s_IMUData.y_GYROS_OFST << ", z_GYROS_OFST = " << s_IMUData.z_GYROS_OFST << std::endl;
-			//std::cout << "t_GYROS_OFST = " << s_IMUData.t_GYROS_OFST << std::endl;
+
 			return FPGADataReader::GYROS_OFST_B_DATA;
 		} else if (0x80 == (data[3] & 0xC0)) {
-			s_IMUData.x_TEMP = getIMU_X(data)/* * accResolution*/;
-			//std::cout << "ACC_DATA: x_ACC_OFST = " << s_IMUData.x_ACC_OFST;
+			s_IMUData.x_TEMP = getIMU_X(data);
 			return FPGADataReader::ACC_OFST_A_DATA;
 		} else if (0xC0 == (data[3] & 0xC0)) {
-			//s_IMUData.y_ACC_OFST = getIMU_Y(data)/* * accResolution*/;
-			//s_IMUData.z_ACC_OFST = getIMU_Z(data)/* * accResolution*/;
-			////s_IMUData.t_ACC_OFST = getIMU_T(data);
-			//s_IMUData.t_ACC_OFST = s_uiEventTCounter;
-			//std::cout << ", y_ACC_OFST = " << s_IMUData.y_ACC_OFST << ", z_ACC_OFST = " << s_IMUData.z_ACC_OFST << std::endl;
-			//std::cout << "t_ACC_OFST = " << s_IMUData.t_ACC_OFST << std::endl;
 			return FPGADataReader::ACC_OFST_B_DATA;
 		}
 	}
+
 	return FPGADataReader::NO_IMU_DATA;
 }
 
@@ -207,7 +184,6 @@ int16_t FPGADataReader::getIMU_X(unsigned char data[4]) {
 	int16_t high2bit = static_cast<int16_t>(data[2] & 0x03);
 
 	s_uiHighGYROS_T = static_cast<uint16_t>(data[2] & 0x78) >> 2;
-	//std::cout << std::hex << s_uiHighGYROS_T << ", " << (s_uiHighGYROS_T>>3) << std::endl;
 
 	s_iLowGYROS_Y = static_cast<int16_t>(data[3] & 0x3F);
 
@@ -246,7 +222,7 @@ unsigned int FPGADataReader::s_uiLastTFromFPGA = 0;
 unsigned int FPGADataReader::s_uiMapT = 0;
 unsigned int FPGADataReader::s_uiEventType = 0;
 unsigned int FPGADataReader::s_uiSpecialEventType = 0;
-//
+
 int16_t FPGADataReader::s_iLowGYROS_Y = 0;
 uint16_t FPGADataReader::s_uiHighGYROS_T = 0;
 IMUData FPGADataReader::s_IMUData;

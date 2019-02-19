@@ -31,17 +31,17 @@
 			#error "Keine installierte OpenCV-Version gefunden!"
 		#endif
 	#else
-		#error "Nicht als C++17 kompiliert!"
-	#endif // __has_include
+		// Not compiled with C++17 so just use the new one!
+			#include <opencv/opencv2/opencv.hpp>
+			#define COMPATIBILITY_VERSION 4
+	#endif
 #else
 	#if COMPATIBILITY_VERSION == 4
 		#include <opencv/opencv2/opencv.hpp>
-	#elif COMPATIBILITY_VERSION == 2
-		#include <opencv2/opencv.hpp>
 	#else
-		#error "Falsche OpenCV-Version oder Installation!"
+		#include <opencv2/opencv.hpp>
 	#endif
-#endif // !COMPATIBILITY_VERSION
+#endif
 
 
 class CeleX4ProcessedData {
@@ -53,7 +53,6 @@ public:
 	void setSensorMode(emSensorMode mode) { m_emSensorMode = mode; }
 
 	//----------------save vector for a frame-------------
-
 	inline void setEventDataVector(std::vector<EventData> eventData) { m_vectorEventData.swap(eventData); }
 	inline std::vector<EventData> getEventDataVector() { return m_vectorEventData; }
 
@@ -85,10 +84,6 @@ public:
 			return m_pEventDenoisedGrayPic;
 		case EventCountPic:
 			return m_pEventCountPic;
-		//case EventDenoisedByTimeBinaryPic:
-		//	return m_pEventDenoisedByTimeBinaryPic;
-		//case EventDenoisedByTimeGrayPic:
-		//	return m_pEventDenoisedByTimeGrayPic;
 		default:
 			break;
 		}
@@ -111,10 +106,6 @@ public:
 			return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventDenoisedGrayPic); 
 		case EventCountPic:
 			return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventCountPic);
-		//case EventDenoisedByTimeBinaryPic:
-		//	return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventDenoisedByTimeBinaryPic);
-		//case EventDenoisedByTimeGrayPic:
-		//	return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventDenoisedByTimeGrayPic);
 		default:
 			break;
 		}

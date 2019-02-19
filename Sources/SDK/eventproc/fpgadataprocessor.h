@@ -25,19 +25,18 @@
 #include "../base/dataqueue.h"
 #include "../include/celex4/celex4.h"
 
+// Hier noch Test auf OpenCV2 /OpenCV4 hinzufügen
 #include <opencv2/core/core.hpp>        
 #include <opencv2/highgui/highgui.hpp>        
 #include <opencv2/imgproc/imgproc.hpp> 
 
-extern bool				isCreateImage;
-extern cv::VideoWriter  g_cvVideoWriterFullPic;
-extern cv::VideoWriter  g_cvVideoWriterEvent;
-extern bool				isReadBin;
-extern FrameData        g_frameData;
-extern FrameData        g_fixedVecData;
-//extern uint64_t         g_ulEventFrameNo;
-//extern uint64_t         g_ulFixedEventNo;
-extern std::vector<EventData>  g_eventData;
+extern bool						isCreateImage;
+extern cv::VideoWriter			g_cvVideoWriterFullPic;
+extern cv::VideoWriter			g_cvVideoWriterEvent;
+extern bool						isReadBin;
+extern FrameData				g_frameData;
+extern FrameData				g_fixedVecData;
+extern std::vector<EventData>	g_eventData;
 
 typedef struct PixelData
 {
@@ -56,8 +55,8 @@ typedef struct EventRowData
 
 class CeleX4ProcessedData;
 class CX4SensorDataServer;
-class FPGADataProcessor
-{
+
+class FPGADataProcessor {
 public:
     FPGADataProcessor();
     ~FPGADataProcessor();

@@ -43,7 +43,7 @@ void FrontPanel::initializeFPGA(const string &bitfileName) {
 	}
 
     XBase base;
-    std::string bitfilePath = base.getApplicationDirPath(); //+ "/" + bitfileName;
+    std::string bitfilePath = base.getApplicationDirPath();
 #ifdef _WIN32
     bitfilePath += "\\";
 #endif
@@ -60,9 +60,6 @@ void FrontPanel::initializeFPGA(const string &bitfileName) {
 
     mReady = true;
     cout << "FPGA Ready." << endl;
-
-    //operation_init_sensor_config();
-    //operation_reset_dereset_ALL();
 }
 
 void FrontPanel::uninitializeFPGA() {

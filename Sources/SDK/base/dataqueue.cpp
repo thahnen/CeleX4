@@ -95,7 +95,6 @@ bool CirDataQueue::enqueue(unsigned char *pData) {
         m_iTail = m_iTail % m_iQueueCapacity;
         ++m_iQueueLenth;
 
-        //std::cout << "CirDataQueue::enqueue: length = " << m_iQueueLenth << std::endl;
         return true;
     }
 }
@@ -110,25 +109,18 @@ bool CirDataQueue::dequeue(unsigned char *&pData) {
         --m_iQueueLenth;
         pData = dataOut.pData;
 
-        //std::cout << "--- CirDataQueue::dequeue: length = " << m_iQueueLenth << std::endl;
         return true;
     }
 }
 
 bool CirDataQueue::isEmpty() {
-    if (0 == m_iQueueLenth) {
-        return true;
-    }
-
+    if (0 == m_iQueueLenth) return true; 
     return false;
 }
 
 bool CirDataQueue::isFull() {
-    if (m_iQueueLenth == m_iQueueCapacity) {
-        return true;
-    } else {
-        return false;
-    }
+    if (m_iQueueLenth == m_iQueueCapacity) return true;
+    else return false;
 }
 
 void CirDataQueue::clear() {
@@ -139,9 +131,6 @@ void CirDataQueue::clear() {
 }
 
 unsigned char *CirDataQueue::head() {
-    if (0 != m_iQueueCapacity) {
-        return m_queue[m_iTail].pData;
-    }
-
+    if (0 != m_iQueueCapacity) return m_queue[m_iTail].pData;
     return NULL;
 }
