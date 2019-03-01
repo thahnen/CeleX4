@@ -1,7 +1,7 @@
-# Meine Veränderungen am CeleX4 Repo
+# Meine Veraenderungen am CeleX4 Repo
 ---
 
-## Veränderte Dateien sind:
+## Veraenderte Dateien sind:
 * README.md
 * /Sources/SDK/Makefile
 * /Sources/SDK/include/celextypes.h
@@ -39,23 +39,43 @@
 
 
 
-## NICHT Veränderte Dateien sind:
+## NICHT Veraenderte Dateien sind:
 * ReleaseNotes.txt
 * LICENSE
+
+*MS Visual Studio Dateien:*
 * /Sources/SDK/CeleX.vcxproj
 * /Sources/SDK/CeleX.sln
+
+*Bibliothek fuer das Frontpanel(?):*
 * /Sources/SDK/lib/*
+
+*TinyXML-Bibliothek:*
 * /Sources/SDK/configproc/tinyxml/*
+
+*Kompilierte Version von MS Visual Studio (hat nichts zu suchen im Repo):*
 * /Sources/SDK/build/*
+
+*Archiv mit Quelltext des FPGA(?):*
 * /Sources/FPGA/*
+
+*Eine Demo, deren Dateien nicht gleich der SDK sind! (sollte in /Samples/ sein):*
 * /Sources/CeleXDemo/*
+
+*Beispiel-Programme/-Projekte:*
 * /Samples/*
+
+*Betriebssystemabhaengige Treiber:*
 * /Drivers/*
+
+*Dokumentationen:*
 * /Documentation/*
+
+*Demonstrationsprogramm(?):*
 * /DemoGUI/*
 
 
-## NOCH NICHT Veränderte Dateien sind:
+## NOCH NICHT Veraenderte Dateien sind:
 * /Sources/SDK/eventproc/fpgadataprocessor.h
 * /Sources/SDK/eventproc/fpgadataprocessor.cpp
 * /Sources/SDK/eventproc/eventprocessing.cpp
@@ -65,7 +85,7 @@
 * /Sources/SDK/base/xthread.cpp
 
 
-## Dateien, die von Kompatibilitätsänderungen OpenCV3 => 4 betroffen sind:
+## Dateien, die von Kompatibilitaetsaenderungen OpenCV3 => 4 betroffen sind:
 * kommt noch
 
 ---

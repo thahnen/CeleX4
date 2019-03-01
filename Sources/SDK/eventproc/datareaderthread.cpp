@@ -18,6 +18,7 @@
 #include <iostream>
 #include "../include/celex4/celex4.h"
 
+
 using namespace std;
 
 DataReaderThread::DataReaderThread(CeleX4* pSensor, const std::string &name) : XThread(name), m_bPipeoutAllowed(false), m_pCelexSensor(pSensor) { }

@@ -48,10 +48,6 @@
 		#else
 			#error "Keine installierte OpenCV-Version gefunden!"
 		#endif
-	#else
-		// Not compiled with C++17 so just use the new one!
-		#include <opencv/opencv2/opencv.hpp>
-		#define COMPATIBILITY_VERSION 4
 	#endif
 #else
 	#if COMPATIBILITY_VERSION == 4
@@ -62,22 +58,25 @@
 #endif
 
 #include "../celextypes.h"
+
+
 #define IMU_DATA_MAX_SIZE    1000
 
+
 enum emSensorMode {
-	FullPictureMode = 0,
-	EventMode = 1,
-	FullPic_Event_Mode = 2
+	FullPictureMode		= 0,
+	EventMode			= 1,
+	FullPic_Event_Mode	= 2
 };
 
 enum emEventPicMode {
-	EventBinaryPic = 0,
-	EventAccumulatedPic = 1,
-	EventGrayPic = 2,
-	EventSuperimposedPic = 3,
-	EventDenoisedBinaryPic = 4,
-	EventDenoisedGrayPic = 5,
-	EventCountPic = 6
+	EventBinaryPic			= 0,
+	EventAccumulatedPic		= 1,
+	EventGrayPic			= 2,
+	EventSuperimposedPic	= 3,
+	EventDenoisedBinaryPic	= 4,
+	EventDenoisedGrayPic	= 5,
+	EventCountPic			= 6
 };
 
 //for bin file reader
@@ -111,6 +110,7 @@ typedef struct IMUData {
 	uint64_t		frameNo;
 } IMUData;
 
+
 class FrontPanel;
 class HHSequenceMgr;
 class HHSequenceSlider;
@@ -122,16 +122,17 @@ class EventProcessing;
 class FPGADataProcessor;
 class DataRecorder;
 
+
 class CELEX_EXPORTS CeleX4 {
 public:
 	enum emDeviceType {
-		Sensor = 0,
+		Sensor			= 0,
 		FPGA,
 		SensorAndFPGA
 	};
 
 	enum emAdvancedBiasType {
-		EVT_VL = 0,
+		EVT_VL		= 0,
 		EVT_VH,
 		ZONE_MINUS,
 		ZONE_PLUS,
@@ -150,14 +151,14 @@ public:
 	};
 
 	enum ErrorCode {
-		NoError = 0,
+		NoError					= 0,
 		InitializeFPGAFailed,
 		PowerUpFailed,
 		ConfigureFailed
 	};
 
 	enum PlaybackState {
-		NoBinPlaying = 0,
+		NoBinPlaying	= 0,
 		Playing,
 		BinReadFinished,
 		PlayFinished,

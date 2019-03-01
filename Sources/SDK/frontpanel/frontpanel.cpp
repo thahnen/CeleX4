@@ -14,7 +14,12 @@
 * limitations under the License.
 */
 
+
+// TODO: cout's realy necessary? Why not put into Preprocessor-DEBUG?
+
+
 #include "frontpanel.h"
+
 
 FrontPanel* FrontPanel::spFrontPanel = NULL;
 
@@ -44,6 +49,7 @@ void FrontPanel::initializeFPGA(const string &bitfileName) {
 
     XBase base;
     std::string bitfilePath = base.getApplicationDirPath();
+
 #ifdef _WIN32
     bitfilePath += "\\";
 #endif

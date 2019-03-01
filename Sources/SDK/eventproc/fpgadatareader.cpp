@@ -14,15 +14,20 @@
 * limitations under the License.
 */
 
+
+// TODO: Delete comments
+
+
 #include "fpgadatareader.h"
+
 
 extern uint64_t g_ulEventFrameNo;
 extern uint64_t g_ulFixedEventNo;
 extern bool isGetFixedVec;
-#define gravity 9.80665
-#define accResolution /*(2*gravity / (std::pow(2.0,15) -1))*/ 0.000598569
-#define resolution /*(250.0 / (std::pow(2.0, 15)-1) / 180*CV_PI)*/ 0.000133162
-#define magResolution /*(4800.0 / (std::pow(2.0, 15)-1))*/ 0.146489
+#define gravity			9.80665			// this is based on what? This constant changes based on your position on the globe -.-
+#define accResolution	0.000598569
+#define resolution		0.000133162
+#define magResolution	0.146489
 
 // Byte 0: {1'b0, X[6:0]}
 // Byte 1: {1'b0, C[0], X[8:7], A[3:0]}

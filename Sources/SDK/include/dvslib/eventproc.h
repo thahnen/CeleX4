@@ -43,10 +43,6 @@
 		#else
 			#error "Keine installierte OpenCV-Version gefunden!"
 		#endif
-	#else
-		// Not compiled with C++17 so just use the new one!
-		#include <opencv/opencv2/opencv.hpp>
-		#define COMPATIBILITY_VERSION 4
 	#endif
 #else
 	#if COMPATIBILITY_VERSION == 4

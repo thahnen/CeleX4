@@ -3,18 +3,20 @@
 
 #include "celex4processeddata.h"
 
+
 class CeleX4DataManager {
 public:
 	enum emDataType {
-		Default = 0,
-		CeleX_Frame_Data = 1
+		Default				= 0,
+		CeleX_Frame_Data	= 1
 	};
 
-	CeleX4DataManager() { }
-	~CeleX4DataManager() { }
+	CeleX4DataManager() {}
+	~CeleX4DataManager() {}
 
 	virtual void onFrameDataUpdated(CeleX4ProcessedData* data) = 0;
 };
+
 
 class CX4Subject {
 public:
@@ -23,9 +25,10 @@ public:
 	virtual void notify(CeleX4DataManager::emDataType dataType) = 0;
 };
 
+
 class CX4SensorDataServer : public CX4Subject {
 public:
-	CX4SensorDataServer() : m_pObserver(NULL), m_pCX4ProcessedData(NULL) { }
+	CX4SensorDataServer() : m_pObserver(NULL), m_pCX4ProcessedData(NULL) {}
 	virtual ~CX4SensorDataServer() {
 		if (m_pObserver) delete m_pObserver;
 	}

@@ -14,8 +14,13 @@
 * limitations under the License.
 */
 
+
+// TODO: Why is this File even there, why not put this also into the Header?
+
+
 #include "../include/celex4/celex4.h"
 #include "../include/celex4/celex4processeddata.h"
+
 
 CeleX4ProcessedData::CeleX4ProcessedData() : m_pFullPicBuffer(NULL), m_pEventBinaryPic(NULL), m_pEventAccumulatedPic(NULL)
 											, m_pEventGrayPic(NULL), m_pEventSuperimposedPic(NULL), m_pEventDenoisedBinaryPic(NULL)
@@ -37,4 +42,4 @@ CeleX4ProcessedData::CeleX4ProcessedData() : m_pFullPicBuffer(NULL), m_pEventBin
 	m_pEventDenoisedByTimeGrayPic = new unsigned char[PIXELS_NUMBER];
 }
 
-CeleX4ProcessedData::~CeleX4ProcessedData() { }
+CeleX4ProcessedData::~CeleX4ProcessedData() {}

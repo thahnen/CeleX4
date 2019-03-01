@@ -17,6 +17,7 @@
 #include "dataprocessthread.h"
 #include <iostream>
 
+
 using namespace std;
 
 DataProcessThread::DataProcessThread(const std::string &name) : XThread(name), m_emPlaybackState(CeleX4::NoBinPlaying) { }
@@ -61,6 +62,7 @@ void DataProcessThread::run() {
 
 		pthread_mutex_unlock(&m_mutex);
 #endif
+
 		if (getPlaybackState()== CeleX4::NoBinPlaying) {
 			if (m_queueData.size() > 0) {
 				unsigned char* data = 0;

@@ -30,6 +30,7 @@
 #include <opencv2/highgui/highgui.hpp>        
 #include <opencv2/imgproc/imgproc.hpp> 
 
+
 extern bool						isCreateImage;
 extern cv::VideoWriter			g_cvVideoWriterFullPic;
 extern cv::VideoWriter			g_cvVideoWriterEvent;
@@ -38,23 +39,24 @@ extern FrameData				g_frameData;
 extern FrameData				g_fixedVecData;
 extern std::vector<EventData>	g_eventData;
 
-typedef struct PixelData
-{
+
+typedef struct PixelData {
 	unsigned int    index;
 	unsigned int    value;
     unsigned int    t;
 } PixelData;
 
-typedef struct EventRowData
-{
-	unsigned int t;
-	unsigned int specialNo;
+typedef struct EventRowData {
+	unsigned int	t;
+	unsigned int	specialNo;
 	std::queue<int> indexs;
 	std::queue<int> adcs;
 } EventRowData;
 
+
 class CeleX4ProcessedData;
 class CX4SensorDataServer;
+
 
 class FPGADataProcessor {
 public:
@@ -124,101 +126,101 @@ private:
 	void calDirectionAndSpeed(); //for multi-slice
 
 private:
-    unsigned char*           m_pFullPicBuffer;
-    unsigned char*           m_pEventPicBuffer;
-	unsigned char*           m_pBufferMotion;  //for for ABC mode
-	unsigned char*           m_pBufferOpticalFlow; //for ABC mode
-	unsigned char*           m_pLastEventPicBuffer; //for denoise
+    unsigned char*				m_pFullPicBuffer;
+    unsigned char*				m_pEventPicBuffer;
+	unsigned char*				m_pBufferMotion;  //for for ABC mode
+	unsigned char*				m_pBufferOpticalFlow; //for ABC mode
+	unsigned char*				m_pLastEventPicBuffer; //for denoise
 
-	uint16_t*                m_pLastADC;
+	uint16_t*					m_pLastADC;
 	//for fpn
-    long*                    m_pFpnGenerationBuffer;
-    int*                     m_pFpnBuffer;
+    long*						m_pFpnGenerationBuffer;
+    int*						m_pFpnBuffer;
 
-    long*                    m_pOverlapEventBuffer;
+    long*						m_pOverlapEventBuffer;
 	//
-	CeleX4ProcessedData*     m_pCX4ProcessedData;
-	CX4SensorDataServer*     m_pCX4Server;
+	CeleX4ProcessedData*		m_pCX4ProcessedData;
+	CX4SensorDataServer*		m_pCX4Server;
 
-	std::string              m_strFpnFilePath;
+	std::string					m_strFpnFilePath;
 
-	emSensorMode             m_emSensorMode;
+	emSensorMode				m_emSensorMode;
     //
-    int                      m_iFpnCalculationTimes;
-	unsigned int             m_uiFullPicPixelCount; //for ABC mode
-	unsigned int             m_uiOpticalFlowPixelCount; //for ABC mode
-	unsigned int             m_uiEventPixelCount; //for ABC mode
+    int							m_iFpnCalculationTimes;
+	unsigned int				m_uiFullPicPixelCount; //for ABC mode
+	unsigned int				m_uiOpticalFlowPixelCount; //for ABC mode
+	unsigned int				m_uiEventPixelCount; //for ABC mode
 	//for event
-	unsigned long            m_ulEventTCounter;
-	unsigned long            m_ulFixedEventTCounter;
+	unsigned long				m_ulEventTCounter;
+	unsigned long				m_ulFixedEventTCounter;
 
 	//
-	unsigned long            m_ulEventCountPerSecond;
-	unsigned long            m_ulEventCountPerSpecial;
-	unsigned long            m_ulEventCountTotal;
-	std::vector<unsigned long>    m_vecEventCountPerSpecial;
+	unsigned long				m_ulEventCountPerSecond;
+	unsigned long				m_ulEventCountPerSpecial;
+	unsigned long				m_ulEventCountTotal;
+	std::vector<unsigned long>	m_vecEventCountPerSpecial;
     //
-    uint32_t                 m_uiUpperADC;
-    uint32_t                 m_uiLowerADC;
-    uint32_t                 m_uiTimeSlice;
-	uint32_t                 m_uiTimeSliceValue; //ms
-	uint32_t                 m_uiOverlapTime;
-	uint32_t                 m_uiClockRate;
-	uint32_t                 m_uiFPGATimeCycle; //Version 2.x: 2^17=131072; Version 1.x: 2^18=262144
+    uint32_t					m_uiUpperADC;
+    uint32_t					m_uiLowerADC;
+    uint32_t					m_uiTimeSlice;
+	uint32_t					m_uiTimeSliceValue; //ms
+	uint32_t					m_uiOverlapTime;
+	uint32_t					m_uiClockRate;
+	uint32_t					m_uiFPGATimeCycle; //Version 2.x: 2^17=131072; Version 1.x: 2^18=262144
 	//
-	uint32_t                 m_uiFrameStartT;
-	uint32_t                 m_uiFrameEndT;
-	uint32_t                 m_uiFEEventTCounter;
-	uint32_t                 m_uiFEFrameTime;
+	uint32_t					m_uiFrameStartT;
+	uint32_t					m_uiFrameEndT;
+	uint32_t					m_uiFEEventTCounter;
+	uint32_t					m_uiFEFrameTime;
 
-	bool                     m_bIsGeneratingFPN;
-	bool                     m_bAdjustBrightness;
+	bool						m_bIsGeneratingFPN;
+	bool						m_bAdjustBrightness;
 
 	//for overlap
-	unsigned long            m_ulOverlapEventTCounter;
+	unsigned long				m_ulOverlapEventTCounter;
 	//
-	uint32_t                 m_uiMeanIntensity;
+	uint32_t					m_uiMeanIntensity;
 
 	//for multi-slice
-	bool                     m_bMultiSliceEnabled;
-	bool                     m_bNeedResetMultiSliceData;
-	uint32_t                 m_uiMultiSliceTime;
-	uint32_t                 m_uiMultiSliceCount;
-	unsigned long            m_ulMultiSliceTCounter;
-	long*                    m_pMultiSliceBuffer;
-	unsigned char*           m_pMultiSliceGrayBuffer;
+	bool						m_bMultiSliceEnabled;
+	bool						m_bNeedResetMultiSliceData;
+	uint32_t					m_uiMultiSliceTime;
+	uint32_t					m_uiMultiSliceCount;
+	unsigned long				m_ulMultiSliceTCounter;
+	long*						m_pMultiSliceBuffer;
+	unsigned char*				m_pMultiSliceGrayBuffer;
 
 	//for playback
-	std::vector<int>         m_vecDataLength;
-	unsigned long            m_ulSpecialEventCount;
-	unsigned long            m_ulSpecialByteSize;
-	CeleX4::PlaybackState    m_emPlaybackState;
+	std::vector<int> 			m_vecDataLength;
+	unsigned long				m_ulSpecialEventCount;
+	unsigned long				m_ulSpecialByteSize;
+	CeleX4::PlaybackState		m_emPlaybackState;
 
 	//
-	std::ifstream			 m_ifstreamBin;
-	uint32_t				 m_uiTimeScale;
-	uint32_t				 m_uiTimeStamp;
-	unsigned long			 m_ulTimeStampCount;
+	std::ifstream				m_ifstreamBin;
+	uint32_t					m_uiTimeScale;
+	uint32_t					m_uiTimeStamp;
+	unsigned long				m_ulTimeStampCount;
 
-	unsigned long			 m_ulVecSize;
-	unsigned long			 m_ulOverlapLen;
+	unsigned long				m_ulVecSize;
+	unsigned long				m_ulOverlapLen;
 
-	uint32_t				 m_uiEventCountStepSize;
-	std::vector<EventData>	 m_vectorEventData;
-	std::vector<EventData>   m_fixedNumVecEventData;
+	uint32_t					m_uiEventCountStepSize;
+	std::vector<EventData>		m_vectorEventData;
+	std::vector<EventData>		m_fixedNumVecEventData;
 	
-	std::vector<IMUData>     m_vectorIMUData;
-	std::vector<IMUData>     m_vectorIMUData_cb;
+	std::vector<IMUData>		m_vectorIMUData;
+	std::vector<IMUData>		m_vectorIMUData_cb;
 
 	//for denoising and compressing
-	long							m_lPreT;
-	float							m_fTSum;
-	long							m_lCount;
-	float							m_fDenoiseCount;
-	float							m_fCompressCount;
-	int								m_iDelta;
-	float							m_fTao;
-	cv::Mat							m_MatCompressTemplateImg;
+	long						m_lPreT;
+	float						m_fTSum;
+	long						m_lCount;
+	float						m_fDenoiseCount;
+	float						m_fCompressCount;
+	int							m_iDelta;
+	float						m_fTao;
+	cv::Mat						m_MatCompressTemplateImg;
 };
 
 #endif // FPGADATAPROCESSOR_H

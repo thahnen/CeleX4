@@ -20,18 +20,19 @@
 #include "../include/celex4/celex4.h"
 #include <stdint.h>
 
+
 class FPGADataReader {
 public:
 	enum IMUDATAType {
-		NO_IMU_DATA = 0,
-		GYROS_A_DATA = 1,
-		GYROS_B_DATA = 2,
-		ACC_A_DATA = 3,
-		ACC_B_DATA = 4,
-		GYROS_OFST_A_DATA = 5,
-		GYROS_OFST_B_DATA = 6,
-		ACC_OFST_A_DATA = 7,
-		ACC_OFST_B_DATA = 8
+		NO_IMU_DATA			= 0,
+		GYROS_A_DATA		= 1,
+		GYROS_B_DATA		= 2,
+		ACC_A_DATA			= 3,
+		ACC_B_DATA			= 4,
+		GYROS_OFST_A_DATA	= 5,
+		GYROS_OFST_B_DATA	= 6,
+		ACC_OFST_A_DATA		= 7,
+		ACC_OFST_B_DATA		= 8
 	};
 
     static unsigned int getColumn(unsigned char data[EVENT_SIZE]);

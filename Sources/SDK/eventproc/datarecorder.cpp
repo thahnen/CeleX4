@@ -17,6 +17,7 @@
 #include "datarecorder.h"
 #include "../base/xbase.h"
 
+
 uint8_t* pData;
 DataRecorder::DataRecorder() : m_bRecording(false), m_iTimeStampStart(0) {
 	pData = new uint8_t[1536001];

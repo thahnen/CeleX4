@@ -29,6 +29,7 @@
 	#include <cstring>
 #endif
 
+
 #define PI (atan(1.0) * 4.0)
 
 cv::VideoWriter			g_cvVideoWriterFullPic;

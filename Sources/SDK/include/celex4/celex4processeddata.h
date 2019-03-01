@@ -30,10 +30,6 @@
 		#else
 			#error "Keine installierte OpenCV-Version gefunden!"
 		#endif
-	#else
-		// Not compiled with C++17 so just use the new one!
-			#include <opencv/opencv2/opencv.hpp>
-			#define COMPATIBILITY_VERSION 4
 	#endif
 #else
 	#if COMPATIBILITY_VERSION == 4
@@ -70,54 +66,38 @@ public:
 
 	inline unsigned char* getEventPicBuffer(emEventPicMode mode) {
 		switch (mode) {
-		case EventBinaryPic:
-			return m_pEventBinaryPic;
-		case EventAccumulatedPic:
-			return m_pEventAccumulatedPic;
-		case EventGrayPic:
-			return m_pEventGrayPic;
-		case EventSuperimposedPic:
-			return m_pEventSuperimposedPic;
-		case EventDenoisedBinaryPic:
-			return m_pEventDenoisedBinaryPic;
-		case EventDenoisedGrayPic:
-			return m_pEventDenoisedGrayPic;
-		case EventCountPic:
-			return m_pEventCountPic;
-		default:
-			break;
+		case EventBinaryPic:			return m_pEventBinaryPic;
+		case EventAccumulatedPic:		return m_pEventAccumulatedPic;
+		case EventGrayPic:				return m_pEventGrayPic;
+		case EventSuperimposedPic:		return m_pEventSuperimposedPic;
+		case EventDenoisedBinaryPic:	return m_pEventDenoisedBinaryPic;
+		case EventDenoisedGrayPic:		return m_pEventDenoisedGrayPic;
+		case EventCountPic:				return m_pEventCountPic;
+		default:						break;
 		}
 		return NULL;
 	}
 
 	inline cv::Mat getEventPicMat(emEventPicMode mode) {
 		switch (mode) {
-		case EventBinaryPic:
-			return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventBinaryPic); 
-		case EventAccumulatedPic:
-			return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventAccumulatedPic); 
-		case EventGrayPic:
-			return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventGrayPic); 
-		case EventSuperimposedPic:
-			return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventSuperimposedPic); 
-		case EventDenoisedBinaryPic:
-			return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventDenoisedBinaryPic); 
-		case EventDenoisedGrayPic:
-			return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventDenoisedGrayPic); 
-		case EventCountPic:
-			return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventCountPic);
-		default:
-			break;
+		case EventBinaryPic:			return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventBinaryPic);
+		case EventAccumulatedPic:		return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventAccumulatedPic);
+		case EventGrayPic:				return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventGrayPic);
+		case EventSuperimposedPic:		return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventSuperimposedPic);
+		case EventDenoisedBinaryPic:	return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventDenoisedBinaryPic);
+		case EventDenoisedGrayPic:		return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventDenoisedGrayPic);
+		case EventCountPic:				return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventCountPic);
+		default:						break;
 		}
 	}
 
-	inline unsigned char* getOpticalFlowPicBuffer() { return m_pEventOpticalFlow; }
-	inline unsigned char* getOpticalFlowDirectionPicBuffer() { return m_pEventOpticalFlowDirection; }
-	inline unsigned char* getOpticalFlowSpeedPicBuffer() { return m_pEventOpticalFlowSpeed; }
+	inline unsigned char* getOpticalFlowPicBuffer() { 			return m_pEventOpticalFlow; }
+	inline unsigned char* getOpticalFlowDirectionPicBuffer() {	return m_pEventOpticalFlowDirection; }
+	inline unsigned char* getOpticalFlowSpeedPicBuffer() {		return m_pEventOpticalFlowSpeed; }
 
-	inline cv::Mat getOpticalFlowPicMat() { return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventOpticalFlow); }
-	inline cv::Mat getOpticalFlowDirectionPicMat() { return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventOpticalFlowDirection); }
-	inline cv::Mat getOpticalFlowSpeedPicMat() { return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventOpticalFlowSpeed); }
+	inline cv::Mat getOpticalFlowPicMat() { 			return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventOpticalFlow); }
+	inline cv::Mat getOpticalFlowDirectionPicMat() { 	return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventOpticalFlowDirection); }
+	inline cv::Mat getOpticalFlowSpeedPicMat() { 		return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventOpticalFlowSpeed); }
 
 private:
 	std::vector<EventData>	m_vectorEventData;	

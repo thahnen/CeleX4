@@ -14,7 +14,7 @@ CC				= gcc
 CXX				= g++
 DEFINES			= -DCELEX_LIBRARY
 CFLAGS			= -pipe -O2 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-CXXFLAGS		= -pipe -O2 -std=gnu++0x -Wall -W -D_REENTRANT -fPIC $(DEFINES)
+CXXFLAGS		= -pipe -O2 -std=c++17 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 INCPATH			= -I. -I.
 DEL_FILE		= rm -f
 CHK_DIR_EXISTS	= test -d
@@ -115,7 +115,8 @@ DIST	= ./CeleX.pro frontpanel/okFrontPanelDLL.h \
 			include/dvslib/imgproc.h \
 			include/celex4/celex4.h \
 			include/celex4/celex4datamanager.h \
-			include/celex4/celex4processeddata.h ./configproc/tinyxml/tinyxmlparser.cpp \
+			include/celex4/celex4processeddata.h \
+			./configproc/tinyxml/tinyxmlparser.cpp \
 			./configproc/tinyxml/tinyxmlerror.cpp \
 			./configproc/tinyxml/tinyxml.cpp \
 			./configproc/tinyxml/tinystr.cpp \

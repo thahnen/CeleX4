@@ -25,10 +25,6 @@
 		#else
 			#error "Keine installierte OpenCV-Version gefunden!"
 		#endif
-	#else
-		// Not compiled with C++17 so just use the new one!
-		#include <opencv/opencv2/opencv.hpp>
-		#define COMPATIBILITY_VERSION 4
 	#endif
 #else
 	#if COMPATIBILITY_VERSION == 4
@@ -41,11 +37,12 @@
 #include "../include/celextypes.h"
 #include "../include/dvslib/eventproc.h"
 
+
 namespace dvs {
 	class EventProcessing {
 	public:
-		EventProcessing() { }
-		~EventProcessing() { }
+		EventProcessing() {}
+		~EventProcessing() {}
 
 		static int calculateDenoiseScore(const cv::Mat& currImg, int row, int col) {
 			bool bHasPreImage = true;
@@ -110,7 +107,7 @@ namespace dvs {
 *  @input    :	multislicebyte : multislice image of uchar format
 				ratio : the ratio of the motion area of whole image within the range [0,1]
 *  @output   :	segimage : binary image after segment
-*  @return   :	error code : 1 for true£¬0 for false
+*  @return   :	error code : 1 for trueï¿½ï¿½0 for false
 *  @author   :	xiongwc  2018/07/02 19:00
 *  @History  :
 *********************************************************/
@@ -119,7 +116,6 @@ int dvs::segmentationByMultislice(const cv::Mat &multislicebyte, double ratio, c
 
 	segimage = cv::Mat::zeros(multislicebyte.size(), CV_8UC1);
 
-	// TODO: hier müsste CV_THRESH_BINARY durch THRESH_BINARY ersetzt werden bei OpenCV4
 #if COMPATIBILITY_VERSION == 2
 	cv::threshold(multislicebyte, segimage, ratio * 255, 255, CV_THRESH_BINARY);
 #else

@@ -19,6 +19,7 @@
 
 #include "../base/xthread.h"
 
+
 class CeleX4;
 class DataReaderThread : public XThread {
 public:
