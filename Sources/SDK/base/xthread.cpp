@@ -22,9 +22,9 @@ XThread::XThread(const std::string threadName) : m_threadName(threadName), m_thr
 #ifndef _WIN32
     , m_mutex(PTHREAD_MUTEX_INITIALIZER), m_cond(PTHREAD_COND_INITIALIZER)
 #endif
-{ }
+{}
 
-XThread::~XThread() { }
+XThread::~XThread() {}
 
 //Create a thread and run (default) or hang
 bool XThread::start(bool bSuspend) {
@@ -38,17 +38,17 @@ bool XThread::createThread(bool bSuspend) {
 
 #ifdef _WIN32
         if(bSuspend) {
-            m_handle = (HANDLE)_beginthreadex(NULL, 0, staticThreadFunc, this, CREATE_SUSPENDED, &m_threadID);
-            m_bSuspended = true;
+            m_handle        = (HANDLE)_beginthreadex(NULL, 0, staticThreadFunc, this, CREATE_SUSPENDED, &m_threadID);
+            m_bSuspended    = true;
         } else {
-            m_handle = (HANDLE)_beginthreadex(NULL, 0, staticThreadFunc, this, 0, &m_threadID);
+            m_handle        = (HANDLE)_beginthreadex(NULL, 0, staticThreadFunc, this, 0, &m_threadID);
         }
 
         m_bRun = (NULL != m_handle);
 #else
         int status = pthread_create(&m_threadID, NULL, staticThreadFunc, this);
-        if (status != 0) std::cout << "creating thread failure" << std::endl;
-        else m_bRun = true;
+        if (status != 0)    std::cout << "creating thread failure" << std::endl;
+        else                m_bRun = true;
 #endif
 
     }
@@ -56,7 +56,7 @@ bool XThread::createThread(bool bSuspend) {
 }
 
 //If the waiting time (milliseconds) is negative, it means unlimited wait.
-void XThread::join(int timeout/* = -1*/) {
+void XThread::join(int timeout) {
 
 #ifdef _WIN32
     if(m_handle && m_bRun) {
@@ -114,8 +114,8 @@ bool XThread::terminate() {
 	if(m_handle && m_bRun) {
         if (::TerminateThread(m_handle, exitCode)) {
             ::CloseHandle(m_handle);
-            m_handle = NULL;
-            m_bRun = false;
+            m_handle    = NULL;
+            m_bRun      = false;
             return true;
         }
 
@@ -132,7 +132,6 @@ bool XThread::isRunning() { return m_bRun; }
 unsigned int XThread::getThreadID() { return m_threadID; }
 
 std::string XThread::getThreadName() { return m_threadName; }
-
 void XThread::setThreadName(std::string threadName) { m_threadName = threadName; }
 
 //Thread function

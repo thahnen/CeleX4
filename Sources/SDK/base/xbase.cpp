@@ -27,9 +27,8 @@
 	#include <unistd.h>
 #endif
 
-XBase::XBase() { }
-
-XBase::~XBase(){ }
+XBase::XBase() {}
+XBase::~XBase(){}
 
 std::string XBase::getApplicationDirPath() {
 
@@ -38,14 +37,14 @@ std::string XBase::getApplicationDirPath() {
     memset(path, 0, 1024);
     GetModuleFileNameA(NULL, path, 1024);
     std::string strPath = path;
-    int len = strPath.find_last_of('\\');
+    int len             = strPath.find_last_of('\\');
     return strPath.substr(0, len);
 #else
     char path[1024];
     int cnt = readlink("/proc/self/exe", path, 1024);
 	cout << "XBase::getApplicationDirPath: readlink count = " << cnt << endl;
     
-	if(cnt < 0|| cnt >= 1024) return NULL;
+	if (cnt < 0 || cnt >= 1024) return NULL;
 
     for(int i = cnt; i >= 0; --i) {
         if(path[i]=='/') {
@@ -61,8 +60,8 @@ std::string XBase::getApplicationDirPath() {
 }
 
 string XBase::getDateTimeStamp() {
-    time_t tt = time(NULL);
-    tm* t = NULL;
+    time_t tt   = time(NULL);
+    tm* t       = NULL;
 
 #ifdef _WIN32
     localtime_s(t, &tt);
@@ -71,21 +70,25 @@ string XBase::getDateTimeStamp() {
 #endif
 
     std::stringstream ss;
-    //year
-    ss << (t->tm_year+1900);
+    ss << (t->tm_year+1900);    //year
+
     //month
     if (t->tm_mon < 10) ss << "0" << t->tm_mon+1;
     else ss << t->tm_mon+1;
+
     //day
     if (t->tm_mday < 10) ss << "0" << t->tm_mday;
     else ss << t->tm_mday;
     ss << "_";
+
     //hour
     if (t->tm_hour < 10) ss << "0" << t->tm_hour;
     else ss << t->tm_hour;
+
     //Minute
     if (t->tm_min < 10) ss << "0" << t->tm_min;
     else ss << t->tm_min;
+
     //Second
     if (t->tm_sec < 10) ss << "0" << t->tm_sec;
     else ss << t->tm_sec;
@@ -113,7 +116,6 @@ bool XBase::isFileExists(std::string filePath) {
     printf("XBase::isFileExists: %s", filePath.c_str());
     fstream _file;
     _file.open(filePath.c_str(), ios::in);
-
     if (!_file) {
         printf("%s can't find!", filePath.c_str());
         return false;

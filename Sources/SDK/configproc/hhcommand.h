@@ -20,10 +20,10 @@
 #include <string>
 #include <stdint.h>
 
+
 class FrontPanel;
 
-class HHCommandBase
-{
+class HHCommandBase {
 public:
     HHCommandBase(const std::string& name);
     ~HHCommandBase();

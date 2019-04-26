@@ -27,7 +27,9 @@ DataProcessThread::~DataProcessThread() {
 	m_pData = NULL;
 }
 
-void DataProcessThread::addData(unsigned char *data, long length) { m_queueData.push(data, length); }
+void DataProcessThread::addData(unsigned char *data, long length) {
+    m_queueData.push(data, length);
+}
 
 void DataProcessThread::clearData() {
 	m_queueData.clear();
@@ -63,10 +65,10 @@ void DataProcessThread::run() {
 		pthread_mutex_unlock(&m_mutex);
 #endif
 
-		if (getPlaybackState()== CeleX4::NoBinPlaying) {
+		if (getPlaybackState() == CeleX4::NoBinPlaying) {
 			if (m_queueData.size() > 0) {
 				unsigned char* data = 0;
-				long dataLen = 0;
+				long dataLen        = 0;
 				m_queueData.pop(data, &dataLen);
 				
 				if (dataLen > 0) {
@@ -77,7 +79,7 @@ void DataProcessThread::run() {
 		} else if(getPlaybackState() == CeleX4::Playing) {
 			if (m_queueData.size() > 0) {
 				unsigned char* data = 0;
-				long dataLen = 0;
+				long dataLen        = 0;
 				m_queueData.pop(data, &dataLen);
 				
 				if (dataLen > 0) {

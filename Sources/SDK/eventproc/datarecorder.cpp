@@ -20,7 +20,7 @@
 
 uint8_t* pData;
 DataRecorder::DataRecorder() : m_bRecording(false), m_iTimeStampStart(0) {
-	pData = new uint8_t[1536001];
+	pData = new uint8_t[1536001];       // what the hell is this number?
 }
 
 DataRecorder::~DataRecorder() { }
@@ -30,8 +30,8 @@ bool DataRecorder::isRecording() { return m_bRecording; }
 void DataRecorder::startRecording(std::string filePath) {
 	XBase base;
 	m_iTimeStampStart = base.getTimeStamp();
-	m_ofstreamRecord.open(filePath.c_str(), std::ios::binary);
 
+	m_ofstreamRecord.open(filePath.c_str(), std::ios::binary);
 	if (!m_ofstreamRecord.is_open()) cout << "Can't open recording file." << endl;
 
 	BinFileAttributes header;
@@ -44,9 +44,9 @@ void DataRecorder::stopRecording(uint32_t clock, int mode) {
 
 	int iTimeRecorded = base.getTimeStamp() - m_iTimeStampStart;
 
-	int hour = iTimeRecorded / 3600;
-	int minute = (iTimeRecorded % 3600) / 60;
-	int second = (iTimeRecorded % 3600) % 60;
+	int hour    = iTimeRecorded / 3600;
+	int minute  = (iTimeRecorded % 3600) / 60;
+	int second  = (iTimeRecorded % 3600) % 60;
 
 	cout << iTimeRecorded << endl;
 
@@ -67,10 +67,12 @@ void DataRecorder::stopRecording(uint32_t clock, int mode) {
 	m_ofstreamRecord.close();
 }
 
-void DataRecorder::writeData(unsigned char* pData, long length) { m_ofstreamRecord.write((char*)pData, length); }
+void DataRecorder::writeData(unsigned char* pData, long length) {
+    m_ofstreamRecord.write((char*)pData, length);
+}
 
 void DataRecorder::writeData(vector<uint8_t> vecData) {
-	if (vecData.size() > 1536001) return;
+	if (vecData.size() > 1536001) return;           // what the hell is this number?
 
 	//--- write package size ---
 	uint32_t size = vecData.size();

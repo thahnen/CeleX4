@@ -20,6 +20,7 @@
 #include <queue>
 #include <stdint.h>
 
+
 typedef struct DataInfo {
     unsigned char* pData;
     unsigned long  length;
@@ -45,7 +46,7 @@ public:
     CirDataQueue(int queueCapacity);
     ~CirDataQueue();
 
-    int getLength(); //get the length of the queue
+    int getLength();
     int getCapacity();
 
     bool enqueue(unsigned char* pData);  //push a element

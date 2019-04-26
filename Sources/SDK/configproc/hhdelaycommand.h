@@ -19,8 +19,8 @@
 
 #include "hhcommand.h"
 
-class HHDelayCommand : public HHCommandBase
-{
+
+class HHDelayCommand : public HHCommandBase {
 public:
     HHDelayCommand(const std::string& name);
 

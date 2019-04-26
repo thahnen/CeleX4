@@ -22,6 +22,7 @@
 #include <map>
 #include <stdint.h>
 
+
 class HHCommandBase;
 
 class HHSequence {

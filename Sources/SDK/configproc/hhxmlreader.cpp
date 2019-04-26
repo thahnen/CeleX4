@@ -14,6 +14,8 @@
 * limitations under the License.
 */
 
+// TODO: alle falschen Formatierungen noch abaendern!
+
 #include "hhxmlreader.h"
 #include "../base/xbase.h"
 #include "hhwireincommand.h"
@@ -22,11 +24,10 @@
 #include "tinyxml/tinyxml.h"
 #include <iostream>
 
-HHXmlReader::HHXmlReader() { }
+HHXmlReader::HHXmlReader() {}
+HHXmlReader::~HHXmlReader() {}
 
-HHXmlReader::~HHXmlReader() { }
-
-bool HHXmlReader::parse(const string &filename, TiXmlDocument *pDom) {
+bool HHXmlReader::parse(const string& filename, TiXmlDocument* pDom) {
     if (!pDom) return false;
 
     XBase base;
@@ -36,7 +37,7 @@ bool HHXmlReader::parse(const string &filename, TiXmlDocument *pDom) {
     filePath += "\\";
 #endif
 
-    filePath += filename;
+    filePath    += filename;
     bool loadOk = pDom->LoadFile(filePath.c_str());
     
 	if (!loadOk) cout << "Can't load: " << pDom->ErrorDesc() << filePath;
@@ -44,17 +45,17 @@ bool HHXmlReader::parse(const string &filename, TiXmlDocument *pDom) {
     return true;
 }
 
-bool HHXmlReader::importCommands(std::vector<HHCommandBase *> &commandList, TiXmlDocument *pDom) { 
+bool HHXmlReader::importCommands(std::vector<HHCommandBase*>& commandList, TiXmlDocument* pDom) {
     cout << endl << "********** HHXmlReader::importCommands Begin **********" << endl;
-    TiXmlElement *pRootEle = pDom->RootElement();
+    TiXmlElement* pRootEle = pDom->RootElement();
 
     if (string(pRootEle->Value()) != "commands") {
         cout << "Can't find commands in xml." << endl;
         return false;
     }
 
-    for (TiXmlElement *pEle = pRootEle->FirstChildElement(); NULL != pEle; pEle = pEle->NextSiblingElement()) {
-        TiXmlAttribute *pAttr = pEle->FirstAttribute();
+    for (TiXmlElement* pEle = pRootEle->FirstChildElement(); NULL != pEle; pEle = pEle->NextSiblingElement()) {
+        TiXmlAttribute* pAttr   = pEle->FirstAttribute();
         std::string commandName = pAttr->Value();
         cout << pAttr->Name() << ": " << pAttr->Value() << endl;
 
@@ -62,8 +63,8 @@ bool HHXmlReader::importCommands(std::vector<HHCommandBase *> &commandList, TiXm
             std::string subCommandName = pChildEle->Value();
 
             if ("wirein" == subCommandName) {
-				HHWireinCommand* pCmd = new HHWireinCommand(commandName);
-                TiXmlNode* pNode = pChildEle->FirstChild();
+				HHWireinCommand* pCmd   = new HHWireinCommand(commandName);
+                TiXmlNode* pNode        = pChildEle->FirstChild();
                 
 				while (NULL != pNode) {
                     //address: 0x00;
@@ -73,22 +74,17 @@ bool HHXmlReader::importCommands(std::vector<HHCommandBase *> &commandList, TiXm
                     uint32_t value;
                     getNumber(pNode->FirstChild()->Value(), &value);
                     
-					if ("address" == tagName) {
-                        pCmd->setAddress(value);
-                    } else if ("value" == tagName) {
-                        pCmd->setValue(value);
-                    } else if (tagName == "mask") {
-                        pCmd->setMask(value);
-                    } else {
-                        cout << "********** command unknow tagName **********" << tagName << endl;
-                    }
+					if ("address" == tagName)       pCmd->setAddress(value);
+                    else if ("value" == tagName)    pCmd->setValue(value);
+                    else if (tagName == "mask")     pCmd->setMask(value);
+                    else                            cout << "********** command unknow tagName **********" << tagName << endl;
 					
                     pNode = pNode->NextSiblingElement();
                 }
                 commandList.push_back(pCmd);
             } else if ("wait" == subCommandName) {
-				HHDelayCommand* pCmd = new HHDelayCommand(commandName);
-                TiXmlNode* pNode = pChildEle->FirstChild();
+				HHDelayCommand* pCmd    = new HHDelayCommand(commandName);
+                TiXmlNode* pNode        = pChildEle->FirstChild();
                 
 				while (NULL != pNode) {
                     string tagName = pNode->Value();
@@ -96,16 +92,12 @@ bool HHXmlReader::importCommands(std::vector<HHCommandBase *> &commandList, TiXm
                     bool bOk = getNumber(pNode->FirstChild()->Value(), &value);
                     
 					if (!bOk) {
-                        //--- invalid value ---
                         pCmd->valid(false);
                         pCmd->error("Invalid param value for " + tagName);
                     }
 
-                    if ("duration" == tagName) {
-                        pCmd->setDuration(value);
-                    } else {
-                        cout << "Unknown tageName:" << tagName;
-                    }
+                    if ("duration" == tagName)  pCmd->setDuration(value);
+                    else                        cout << "Unknown tageName:" << tagName;
 
                     pNode = pNode->NextSiblingElement();
                 }
@@ -117,24 +109,26 @@ bool HHXmlReader::importCommands(std::vector<HHCommandBase *> &commandList, TiXm
     return true;
 }
 
-bool HHXmlReader::importSequences(HHSequenceMgr *pSeqMgr, std::vector<HHSequence *> &sequenceList, TiXmlDocument *pDom) {
+// TODO: ab hier weiter!
+
+bool HHXmlReader::importSequences(HHSequenceMgr* pSeqMgr, std::vector<HHSequence*>& sequenceList, TiXmlDocument* pDom) {
     cout << endl << "********** HHXmlReader::importSequences Begin **********" << endl;
-    TiXmlElement *pRootEle = pDom->RootElement();
+    TiXmlElement* pRootEle = pDom->RootElement();
 
     if (string(pRootEle->Value()) != "sequences") {
         cout << "Can't find sequences in xml." << endl;
         return false;
     }
 
-    for (TiXmlElement *pEle = pRootEle->FirstChildElement(); NULL != pEle; pEle = pEle->NextSiblingElement()) {
+    for (TiXmlElement* pEle = pRootEle->FirstChildElement(); NULL != pEle; pEle = pEle->NextSiblingElement()) {
         HHSequence* pSeq = NULL;
         std::string seqName;
-        TiXmlAttribute *pAttr = pEle->FirstAttribute();
+        TiXmlAttribute* pAttr = pEle->FirstAttribute();
 
         while (NULL != pAttr) {
             cout << pAttr->Name() << ": " << pAttr->Value() << "; ";
-            string key = pAttr->Name();
-            string value = pAttr->Value();
+            string key      = pAttr->Name();
+            string value    = pAttr->Value();
             
 			if ("name" == key) {
                 seqName = value;

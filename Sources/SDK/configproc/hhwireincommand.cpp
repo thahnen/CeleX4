@@ -18,9 +18,10 @@
 #include "../frontpanel/frontpanel.h"
 #include <iostream>
 
-HHWireinCommand::HHWireinCommand(const std::string& name) :HHCommandBase(name) {
-    m_uiMask = 0;
-    m_uiValue = 0;
+
+HHWireinCommand::HHWireinCommand(const std::string& name) : HHCommandBase(name) {
+    m_uiMask    = 0;
+    m_uiValue   = 0;
     m_uiAddress = 0;
 }
 
@@ -35,11 +36,11 @@ void HHWireinCommand::setMask(uint32_t mask) { m_uiMask = mask; }
 
 void HHWireinCommand::setValue(uint32_t value) {
     int tmpmask = m_uiMask;
-    int shift = 0;
+    int shift   = 0;
 
     while ((tmpmask % 2 == 0) && (tmpmask != 0)) {
-        tmpmask = tmpmask / 2;
-        shift ++;
+        tmpmask /= 2;
+        shift++;
     }
 
     m_uiValue = value << shift;
@@ -50,8 +51,8 @@ HHCommandBase *HHWireinCommand::clone() {
     pCmd->valid(this->valid());
     pCmd->needsArg(this ->needsArg());
     pCmd->error(this->error());
-    pCmd->m_uiAddress = this->m_uiAddress;
-    pCmd->m_uiValue = this->m_uiValue;
-    pCmd->m_uiMask = this->m_uiMask;
+    pCmd->m_uiAddress   = this->m_uiAddress;
+    pCmd->m_uiValue     = this->m_uiValue;
+    pCmd->m_uiMask      = this->m_uiMask;
     return pCmd;
 }

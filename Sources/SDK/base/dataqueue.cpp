@@ -21,21 +21,20 @@
 
 using namespace std;
 
-DataQueue::DataQueue() : m_size(0) { }
+DataQueue::DataQueue() : m_size(0) {}
+DataQueue::~DataQueue() {}
 
-DataQueue::~DataQueue() { }
-
-void DataQueue::push(unsigned char *pData, long length) {
-    DataInfo dataIn;
+void DataQueue::push(unsigned char* pData, long length) {
     unsigned char* pBuffer = new unsigned char[length];
     memcpy(pBuffer, pData, length);
-    dataIn.pData = pBuffer;
-    dataIn.length = length;
+    DataInfo dataIn;
+    dataIn.pData    = pBuffer;
+    dataIn.length   = length;
     m_queue.push(dataIn);
     m_size += dataIn.length;
 }
 
-void DataQueue::pop(unsigned char *&pData, long *length) {
+void DataQueue::pop(unsigned char*& pData, long* length) {
     if (m_queue.size() <=0) return;
 
     DataInfo dataOut = m_queue.front();
@@ -45,7 +44,7 @@ void DataQueue::pop(unsigned char *&pData, long *length) {
     if (!dataOut.pData) {
         *length = 0;
     } else {
-        pData = dataOut.pData;
+        pData   = dataOut.pData;
         *length = dataOut.length;
     }
 }
@@ -67,9 +66,9 @@ void DataQueue::clear() {
 //------------- CirDataQueue -------------
 CirDataQueue::CirDataQueue(int queueCapacity) : m_iHead(0), m_iTail(0), m_iQueueLenth(0), m_iQueueCapacity(queueCapacity) {
     for (int i = 0; i < queueCapacity; ++i) {
-        DataInfo dataIn;
         dataIn.pData = new unsigned char[PIXELS_NUMBER];
 
+        DataInfo dataIn;
         for (int i = 0; i < PIXELS_NUMBER; ++i) dataIn.pData[i] = 0;
         
 		dataIn.length = 0;
@@ -106,7 +105,7 @@ bool CirDataQueue::dequeue(unsigned char *&pData) {
         DataInfo dataOut = m_queue[m_iHead];
         m_iHead++;
         m_iHead = m_iHead % m_iQueueCapacity;
-        --m_iQueueLenth;
+        --m_iQueueLenth;                        // why --[...] ??
         pData = dataOut.pData;
 
         return true;
@@ -114,23 +113,20 @@ bool CirDataQueue::dequeue(unsigned char *&pData) {
 }
 
 bool CirDataQueue::isEmpty() {
-    if (0 == m_iQueueLenth) return true; 
-    return false;
+    return m_iQueueLength == 0;
 }
 
 bool CirDataQueue::isFull() {
-    if (m_iQueueLenth == m_iQueueCapacity) return true;
-    else return false;
+    return m_iQueueLenth == m_iQueueCapacity;
 }
 
 void CirDataQueue::clear() {
     std::cout << "CirDataQueue::clear" << std::endl;
-    m_iHead = 0;
-    m_iTail = 0;
-    m_iQueueLenth = 0;
+    m_iHead         = 0;
+    m_iTail         = 0;
+    m_iQueueLenth   = 0;
 }
 
-unsigned char *CirDataQueue::head() {
-    if (0 != m_iQueueCapacity) return m_queue[m_iTail].pData;
-    return NULL;
+unsigned char* CirDataQueue::head() {
+    return (0 != m_iQueueCapacity) ? m_queue[m_iTail].pData : NULL;
 }
