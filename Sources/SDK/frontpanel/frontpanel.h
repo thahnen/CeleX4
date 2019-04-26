@@ -20,13 +20,14 @@
 #ifdef _WIN32
 	#include <windows.h>
 #else
-	#include<unistd.h>
+	#include <unistd.h>
 #endif
 
 #include <iostream>
 #include <stdint.h>
 #include "okFrontPanelDLL.h"
 #include "../base/xbase.h"
+
 
 class FrontPanel {
 private:

@@ -14,11 +14,8 @@
 * limitations under the License.
 */
 
-#include "fpgadataprocessor.h"
-#include "fpgadatareader.h"
-#include "../include/celex4/celex4processeddata.h"
-#include "../include/celex4/celex4datamanager.h"
-#include "../base/xbase.h"
+// TODO: Einrueckungen, Leerzeichen, falsche Formatierung etc.
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -29,8 +26,14 @@
 	#include <cstring>
 #endif
 
+#include "fpgadataprocessor.h"
+#include "fpgadatareader.h"
+#include "../include/celex4/celex4processeddata.h"
+#include "../include/celex4/celex4datamanager.h"
+#include "../base/xbase.h"
 
-#define PI (atan(1.0) * 4.0)
+#define PI (atan(1.0) * 4.0)            // you stupid or sth? whats wrong with PI im math.h?
+
 
 cv::VideoWriter			g_cvVideoWriterFullPic;
 cv::VideoWriter         g_cvVideoWriterEvent;
@@ -57,66 +60,53 @@ FPGADataProcessor::FPGADataProcessor() : m_bIsGeneratingFPN(false), m_bAdjustBri
 										, m_ulVecSize(0), m_ulOverlapLen(0), m_lPreT(0), m_fTSum(0)
 										, m_lCount(0), m_fDenoiseCount(0), m_fCompressCount(0), m_iDelta(100)
 										, m_fTao(0) {
-	isCreateImage = false;
-	isReadBin = false;
-	m_uiEventCountStepSize = 9;
-	m_pFullPicBuffer = new unsigned char[PIXELS_NUMBER];
-	m_pEventPicBuffer = new unsigned char[PIXELS_NUMBER];
-
-	m_pFpnGenerationBuffer = new long[PIXELS_NUMBER];
-
-	m_pBufferMotion = new unsigned char[PIXELS_NUMBER];
-	m_pBufferOpticalFlow = new unsigned char[PIXELS_NUMBER];
-
-	m_pMultiSliceBuffer = new long[PIXELS_NUMBER];
+	isCreateImage           = false;
+	isReadBin               = false;
+	m_uiEventCountStepSize  = 9;
+	m_pFullPicBuffer        = new unsigned char[PIXELS_NUMBER];
+	m_pEventPicBuffer       = new unsigned char[PIXELS_NUMBER];
+	m_pFpnGenerationBuffer  = new long[PIXELS_NUMBER];
+	m_pBufferMotion         = new unsigned char[PIXELS_NUMBER];
+	m_pBufferOpticalFlow    = new unsigned char[PIXELS_NUMBER];
+	m_pMultiSliceBuffer     = new long[PIXELS_NUMBER];
 	m_pMultiSliceGrayBuffer = new unsigned char[PIXELS_NUMBER];
+	m_pFpnBuffer            = new int[PIXELS_NUMBER];
+	m_pOverlapEventBuffer   = new long[PIXELS_NUMBER];
+	m_pLastADC              = new uint16_t[PIXELS_NUMBER];
 
-	m_pFpnBuffer = new int[PIXELS_NUMBER];
-
-	m_pOverlapEventBuffer = new long[PIXELS_NUMBER];
-
-	m_pLastADC = new uint16_t[PIXELS_NUMBER];
-
-	for (int i = 0; i < PIXELS_NUMBER; ++i) {
-		m_pFullPicBuffer[i] = 0;
-		m_pEventPicBuffer[i] = 0;
-		m_pFpnBuffer[i] = 0;
-		m_pBufferMotion[i] = 0;
-		m_pBufferOpticalFlow[i] = 0;
-		m_pMultiSliceBuffer[i] = 0;
-		m_pOverlapEventBuffer[i] = 0;
-
-		m_pLastADC[i] = 0;
+	for (int i = 0; i < PIXELS_NUMBER; ++i) {   // this right?
+		m_pFullPicBuffer[i]         = 0;
+		m_pEventPicBuffer[i]        = 0;
+		m_pFpnBuffer[i]             = 0;
+		m_pBufferMotion[i]          = 0;
+		m_pBufferOpticalFlow[i]     = 0;
+		m_pMultiSliceBuffer[i]      = 0;
+		m_pOverlapEventBuffer[i]    = 0;
+		m_pLastADC[i]               = 0;
 	}
 
-	m_pCX4ProcessedData = new CeleX4ProcessedData;
-	m_pCX4Server = new CX4SensorDataServer;
+	m_pCX4ProcessedData     = new CeleX4ProcessedData;
+	m_pCX4Server            = new CX4SensorDataServer;
 	m_pCX4Server->setCX4SensorData(m_pCX4ProcessedData);
 }
 
 FPGADataProcessor::~FPGADataProcessor() {
-	if (m_pFullPicBuffer) delete[] m_pFullPicBuffer;
-
-	if (m_pEventPicBuffer) delete[] m_pEventPicBuffer;
-	
-	if (m_pFpnBuffer) delete[] m_pFpnBuffer;
-	
-	if (m_pFpnGenerationBuffer) delete[] m_pFpnGenerationBuffer;
-	
-	if (m_pMultiSliceBuffer) delete[] m_pMultiSliceBuffer;
-	
-	if (m_pMultiSliceGrayBuffer) delete[] m_pMultiSliceGrayBuffer;
+	if (m_pFullPicBuffer)           delete[] m_pFullPicBuffer;
+	if (m_pEventPicBuffer)          delete[] m_pEventPicBuffer;
+	if (m_pFpnBuffer)               delete[] m_pFpnBuffer;
+	if (m_pFpnGenerationBuffer)     delete[] m_pFpnGenerationBuffer;
+	if (m_pMultiSliceBuffer)        delete[] m_pMultiSliceBuffer;
+	if (m_pMultiSliceGrayBuffer)    delete[] m_pMultiSliceGrayBuffer;
 }
 
-bool FPGADataProcessor::setFpnFile(const std::string &fpnFile) {
+bool FPGADataProcessor::setFpnFile(const std::string& fpnFile) {
 	int index = 0;
 	std::ifstream in;
+
 	in.open(fpnFile.c_str());
-	
 	if (!in.is_open()) return false;
 
 	std::string line;
-
 	while (!in.eof() && index < PIXELS_NUMBER) {
 		in >> line;
 		m_pFpnBuffer[index] = atoi(line.c_str());
@@ -124,17 +114,14 @@ bool FPGADataProcessor::setFpnFile(const std::string &fpnFile) {
 	}
 
 	if (index != PIXELS_NUMBER) return false;
-
 	return true;
 }
 
-void FPGADataProcessor::processData(unsigned char *data, long length) {
+void FPGADataProcessor::processData(unsigned char* data, long length) {
 	if (!data) return;
 
 	//--------------- Align data ---------------
-	long i = 0;
-
-	for (i = 0; i + EVENT_SIZE <= length; i = i + EVENT_SIZE) {
+	for (long i=0; i+EVENT_SIZE <= length; i=i+EVENT_SIZE) {
 		if (FPGADataReader::isIMUData(&data[i]) == FPGADataReader::ACC_OFST_B_DATA) {
 			IMUData data = FPGADataReader::getIMUData();
 			m_vectorIMUData.push_back(data);
@@ -145,6 +132,7 @@ void FPGADataProcessor::processData(unsigned char *data, long length) {
 				m_vectorIMUData.erase(itr);
 			}
 		}
+
 		bool isSpecialEvent = !(processEvent(&data[i]));
 
 		if (m_ulTimeStampCount > m_uiTimeStamp) {
@@ -205,11 +193,11 @@ void FPGADataProcessor::processData(unsigned char *data, long length) {
 	}
 }
 
-bool FPGADataProcessor::processEvent(unsigned char *data) {
+bool FPGADataProcessor::processEvent(unsigned char* data) {
 	m_ulSpecialByteSize++;
 
 	if (FPGADataReader::isSpecialEvent(data)) {
-		++m_ulSpecialEventCount;
+		++m_ulSpecialEventCount;                                // why ++[...] and not [...]++ ??
 		m_vecDataLength.push_back(m_ulSpecialByteSize * 4);
 		m_ulSpecialByteSize = 0;
 
@@ -220,15 +208,15 @@ bool FPGADataProcessor::processEvent(unsigned char *data) {
 		}
 
 		if (FullPictureMode == m_emSensorMode) {
-			m_uiFullPicPixelCount = 0;
+			m_uiFullPicPixelCount       = 0;
 			return false;
 		} else if (EventMode == m_emSensorMode) {
-			m_uiEventPixelCount = 0;
-			m_ulEventCountPerSpecial = 0;
+			m_uiEventPixelCount         = 0;
+			m_ulEventCountPerSpecial    = 0;
 		} else if (m_emSensorMode == FullPic_Event_Mode) {
-			m_uiFullPicPixelCount = 0;
-			m_uiEventPixelCount = 0;
-			m_uiOpticalFlowPixelCount = 0;
+			m_uiFullPicPixelCount       = 0;
+			m_uiEventPixelCount         = 0;
+			m_uiOpticalFlowPixelCount   = 0;
 			return false;
 		}
 	} else if (FPGADataReader::isRowEvent(data)) {
@@ -244,15 +232,14 @@ bool FPGADataProcessor::processRowEvent(unsigned char* data) {
 	FPGADataReader::MapTime(data);
 
 	if (m_emSensorMode == EventMode) {
-		unsigned int t = FPGADataReader::getTFromFPGA();
-		unsigned int tLast = FPGADataReader::getLastTFromFPGA();
-		int diffT = t - tLast;
+		unsigned int t      = FPGADataReader::getTFromFPGA();
+		unsigned int tLast  = FPGADataReader::getLastTFromFPGA();
+		int diffT           = t-tLast;
 
 		if (diffT < 0) diffT = diffT + m_uiFPGATimeCycle;
 
-		if (m_bMultiSliceEnabled) m_ulMultiSliceTCounter += diffT;
-
-		if (m_uiOverlapTime > 0) m_ulOverlapEventTCounter += diffT;
+		if (m_bMultiSliceEnabled)   m_ulMultiSliceTCounter += diffT;
+		if (m_uiOverlapTime > 0)    m_ulOverlapEventTCounter += diffT;
 
 		m_ulEventTCounter += diffT;
 		m_ulTimeStampCount += diffT;
@@ -341,7 +328,7 @@ void FPGADataProcessor::processColEvent(unsigned char* data) {
 		} else if (m_emSensorMode == FullPic_Event_Mode) {
 			unsigned int type = FPGADataReader::getEventType();
 
-			if (0 == type) {
+			if (type == 0) {
 				// Motion
 				if (m_uiFrameEndT == 0 || (m_uiFEEventTCounter >= m_uiFrameStartT && m_uiFEEventTCounter < m_uiFrameEndT)) {
 					m_pBufferMotion[index] += m_uiEventCountStepSize;
@@ -350,11 +337,11 @@ void FPGADataProcessor::processColEvent(unsigned char* data) {
 
 				m_uiEventPixelCount++;
 				eData.t = m_ulTimeStampCount / m_uiTimeScale;
-			} else if (1 == type) {
+			} else if (type == 1) {
 				//Full Picture
 				m_pFullPicBuffer[index] = adc1;
 				m_uiFullPicPixelCount++;
-			} else if (2 == type) {
+			} else if (type == 2) {
 				//Optical Flow
 				m_pBufferOpticalFlow[index] = adc1; //for optical-flow A is T
 				m_uiOpticalFlowPixelCount++;
@@ -370,17 +357,16 @@ void FPGADataProcessor::createImage() {
 		unsigned long sumIntensity = 0;
 		unsigned char* pDesFullPic = m_pCX4ProcessedData->getFullPicBuffer();
 		
-		if (NULL == pDesFullPic) return;
+		if (pDesFullPic == NULL) return;
 
 		for (int i = 0; i < PIXELS_NUMBER; ++i) {
 			//--- full picture buffer ---
 			int value = m_pFullPicBuffer[i] - m_pFpnBuffer[i]; //Subtract FPN
 			
 			if (value < 0) value = 0;
-			
-			if (value > 255) value = 255;
+			else (value > 255) value = 255;
 
-			pDesFullPic[PIXELS_NUMBER - i - 1] = value;
+			pDesFullPic[PIXELS_NUMBER-i-1] = value;
 			sumIntensity += value;
 		}
 
@@ -391,8 +377,8 @@ void FPGADataProcessor::createImage() {
 			g_cvVideoWriterFullPic.write(mat);
 		}
 	} else if (EventMode == m_emSensorMode) {
-		int multiSliceTDiff = 0;
-		unsigned int uiTPerSlice = 0;
+		int multiSliceTDiff         = 0;
+		unsigned int uiTPerSlice    = 0;
 
 		if (m_emSensorMode == EventMode) {
 			if (m_uiOverlapTime > 0) {
@@ -419,27 +405,26 @@ void FPGADataProcessor::createImage() {
 			m_ulEventTCounter = 0;
 		}
 
-		unsigned long sumIntensity = 0;
-		unsigned char* pDesEAccumulatedPic = m_pCX4ProcessedData->getEventPicBuffer(EventAccumulatedPic);
-		unsigned char* pDesEBinarydPic = m_pCX4ProcessedData->getEventPicBuffer(EventBinaryPic);
-		unsigned char* pDesEGrayPic = m_pCX4ProcessedData->getEventPicBuffer(EventGrayPic);
-		unsigned char* pDesESuperimposedPic = m_pCX4ProcessedData->getEventPicBuffer(EventSuperimposedPic);
-		unsigned char* pDesEDenoisedBinaryPic = m_pCX4ProcessedData->getEventPicBuffer(EventDenoisedBinaryPic);
-		unsigned char* pDesEDenoisedGrayPic = m_pCX4ProcessedData->getEventPicBuffer(EventDenoisedGrayPic);
-		unsigned char* pDesECountPic = m_pCX4ProcessedData->getEventPicBuffer(EventCountPic);
-		unsigned char* pDesOpticalRawPic = m_pCX4ProcessedData->getOpticalFlowPicBuffer();
+		unsigned long sumIntensity              = 0;
+		unsigned char* pDesEAccumulatedPic      = m_pCX4ProcessedData->getEventPicBuffer(EventAccumulatedPic);
+		unsigned char* pDesEBinarydPic          = m_pCX4ProcessedData->getEventPicBuffer(EventBinaryPic);
+		unsigned char* pDesEGrayPic             = m_pCX4ProcessedData->getEventPicBuffer(EventGrayPic);
+		unsigned char* pDesESuperimposedPic     = m_pCX4ProcessedData->getEventPicBuffer(EventSuperimposedPic);
+		unsigned char* pDesEDenoisedBinaryPic   = m_pCX4ProcessedData->getEventPicBuffer(EventDenoisedBinaryPic);
+		unsigned char* pDesEDenoisedGrayPic     = m_pCX4ProcessedData->getEventPicBuffer(EventDenoisedGrayPic);
+		unsigned char* pDesECountPic            = m_pCX4ProcessedData->getEventPicBuffer(EventCountPic);
+		unsigned char* pDesOpticalRawPic        = m_pCX4ProcessedData->getOpticalFlowPicBuffer();
 
 		for (int i = 0; i < PIXELS_NUMBER; ++i) {
 			//--- full picture buffer ---
 			int value = m_pFullPicBuffer[i] - m_pFpnBuffer[i]; //Subtract FPN
 
 			if (value < 0) value = 0;
-
-			if (value > 255) value = 255;
+			else (value > 255) value = 255;
 
 			pDesEAccumulatedPic[PIXELS_NUMBER - i - 1] = value;
-			//--- event picture buffer ---
 
+			//--- event picture buffer ---
 			if (m_uiOverlapTime > 0) {
 				if (m_pOverlapEventBuffer[i] > 0) {
 					m_pOverlapEventBuffer[i] = m_pOverlapEventBuffer[i] - m_uiTimeSlice;
@@ -449,34 +434,35 @@ void FPGADataProcessor::createImage() {
 					m_pOverlapEventBuffer[i] = 0;
 				}
 
-				pDesEBinarydPic[PIXELS_NUMBER - i - 1] = m_pOverlapEventBuffer[i] > 0 ? 255 : 0; //binary pic
-				pDesEGrayPic[PIXELS_NUMBER - i - 1] = m_pOverlapEventBuffer[i] > 0 ? value : 0; //gray pic
+				pDesEBinarydPic[PIXELS_NUMBER-i-1]  = m_pOverlapEventBuffer[i] > 0 ? 255 : 0;   //binary pic
+				pDesEGrayPic[PIXELS_NUMBER-i-1]     = m_pOverlapEventBuffer[i] > 0 ? value : 0; //gray pic
 			} else {
-				pDesEBinarydPic[PIXELS_NUMBER - i - 1] = m_pEventPicBuffer[i] > 0 ? 255 : 0; //binary pic
-				pDesEGrayPic[PIXELS_NUMBER - i - 1] = m_pEventPicBuffer[i] > 0 ? value : 0; //gray pic
+				pDesEBinarydPic[PIXELS_NUMBER-i-1]  = m_pEventPicBuffer[i] > 0 ? 255 : 0;       //binary pic
+				pDesEGrayPic[PIXELS_NUMBER-i-1]     = m_pEventPicBuffer[i] > 0 ? value : 0;     //gray pic
 			}
 
-			pDesESuperimposedPic[PIXELS_NUMBER - i - 1] = pDesEDenoisedBinaryPic[PIXELS_NUMBER - i - 1] > 0 ? 255 : value; //superimposed pic
-			pDesECountPic[PIXELS_NUMBER - i - 1] = m_pEventPicBuffer[i];	//event count pic
+			pDesESuperimposedPic[PIXELS_NUMBER-i-1] = pDesEDenoisedBinaryPic[PIXELS_NUMBER - i - 1] > 0 ? 255 : value; //superimposed pic
+			pDesECountPic[PIXELS_NUMBER-i-1]        = m_pEventPicBuffer[i];                     //event count pic
+
 			//--- denoised pic ---
 			int score = m_pEventPicBuffer[i];
 			
 			if (score > 0) score = calculateDenoiseScore(m_pEventPicBuffer, m_pLastEventPicBuffer, i);
 			else score = 0;
 
-			pDesEDenoisedBinaryPic[PIXELS_NUMBER - i - 1] = score; //denoised binary pic
-			pDesEDenoisedGrayPic[PIXELS_NUMBER - i - 1] = score > 0 ? value : 0; //denoised gray pic
+			pDesEDenoisedBinaryPic[PIXELS_NUMBER-i-1]   = score;                    //denoised binary pic
+			pDesEDenoisedGrayPic[PIXELS_NUMBER-i-1]     = score > 0 ? value : 0;    //denoised gray pic
 
 			if (m_bMultiSliceEnabled) {
 				if (m_pMultiSliceBuffer[i] > 0 && uiTPerSlice > 0) {
 					int slice = m_pMultiSliceBuffer[i] / uiTPerSlice + 1;
-					m_pMultiSliceGrayBuffer[PIXELS_NUMBER - i - 1] = slice;
+					m_pMultiSliceGrayBuffer[PIXELS_NUMBER-i-1] = slice;
 
 					m_pMultiSliceBuffer[i] = m_pMultiSliceBuffer[i] - multiSliceTDiff;
 					
 					if (m_pMultiSliceBuffer[i] < 0) m_pMultiSliceBuffer[i] = 0;
 				} else {
-					m_pMultiSliceGrayBuffer[PIXELS_NUMBER - i - 1] = 0;
+					m_pMultiSliceGrayBuffer[PIXELS_NUMBER-i-1] = 0;
 					m_pMultiSliceBuffer[i] = 0;
 				}
 			}
@@ -524,8 +510,7 @@ void FPGADataProcessor::createImage() {
 			int value = m_pFullPicBuffer[i] - m_pFpnBuffer[i]; //Subtract FPN
 			
 			if (value < 0) value = 0;
-			
-			if (value > 255) value = 255;
+			else (value > 255) value = 255;
 			
 			pDesFullPic[PIXELS_NUMBER - i - 1] = value;
 			sumIntensity += value;

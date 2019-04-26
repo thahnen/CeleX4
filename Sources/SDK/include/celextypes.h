@@ -17,7 +17,6 @@
 #ifndef CELEXTYPES_H
 #define CELEXTYPES_H
 
-
 #include <stdint.h>
 
 

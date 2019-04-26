@@ -39,6 +39,7 @@ public:
     static unsigned int getRow(unsigned char data[EVENT_SIZE]);
     static unsigned int getTimeStamp(unsigned char data[EVENT_SIZE]);
     static unsigned int getBrightness(unsigned char data[EVENT_SIZE]);
+
     static unsigned int getCurrentRow() { return s_uiCurrentRow; }
 	static unsigned int getLastRow() { return s_uiLastRow; }
     static unsigned int getTFromFPGA() { return s_uiTFromFPGA; }
@@ -46,6 +47,7 @@ public:
     static unsigned int getMapT() { return s_uiMapT; }
     static unsigned int getEventType() { return s_uiEventType; }
     static unsigned int getSpecialEventType() { return s_uiSpecialEventType; }
+
 	static void setEventCounter(uint32_t counter) { s_uiEventTCounter = counter; }
 	static void setFixedEventCounter(uint32_t counter) { s_uiFixedEventTCounter = counter; }
 
@@ -62,6 +64,7 @@ public:
 	static int16_t getIMU_Y(unsigned char data[4]);
 	static int16_t getIMU_Z(unsigned char data[4]);
 	static uint16_t getIMU_T(unsigned char data[4]);
+
 	static IMUData getIMUData() { return s_IMUData; }
     
 private:
@@ -72,12 +75,12 @@ private:
     static unsigned int  s_uiMapT;
     static unsigned int  s_uiEventType;
     static unsigned int  s_uiSpecialEventType;
+
 	//IMU data
 	static int16_t       s_iLowGYROS_Y;
 	static uint16_t      s_uiHighGYROS_T;
 	static IMUData       s_IMUData;
 	static uint32_t      s_uiEventTCounter;
-
 	static uint32_t	     s_uiFixedEventTCounter;
 };
 

@@ -32,22 +32,21 @@
 		#endif
 	#endif
 	#define DLL_ENTRY   __stdcall
-	typedef unsigned int  UINT32;
-	typedef unsigned char UINT8;
 #elif defined(__linux__) || defined(__APPLE__) || defined(__QNX__)
 	#define okDLLEXPORT __attribute__ ((visibility("default")))
 	#define DLL_ENTRY
-	typedef unsigned int  UINT32;
-	typedef unsigned char UINT8;
 #endif
 
+// Typedefs here because they would be done in both branches!
+typedef unsigned int  UINT32;
+typedef unsigned char UINT8;
 
 #if defined(_WIN32) && defined(_UNICODE)
-	typedef wchar_t const * okFP_dll_pchar;
+	typedef const wchar_t* okFP_dll_pchar;
 #elif defined(_WIN32)
-	typedef const char * okFP_dll_pchar;
+	typedef const char* okFP_dll_pchar;
 #else
-	typedef const char * okFP_dll_pchar;
+	typedef const char* okFP_dll_pchar;
 #endif
 
 #ifdef __cplusplus
@@ -55,6 +54,7 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
+
 
 extern "C" {
 #endif // __cplusplus
@@ -85,95 +85,101 @@ typedef int Bool;
 	#define FALSE   0
 #endif
 
-typedef enum {
-	ok_ClkSrc22150_Ref=0,
-	ok_ClkSrc22150_Div1ByN=1,
-	ok_ClkSrc22150_Div1By2=2,
-	ok_ClkSrc22150_Div1By3=3,
-	ok_ClkSrc22150_Div2ByN=4,
-	ok_ClkSrc22150_Div2By2=5,
-	ok_ClkSrc22150_Div2By4=6
-} ok_ClockSource_22150;
 
 typedef enum {
-	ok_ClkSrc22393_Ref=0,
-	ok_ClkSrc22393_PLL0_0=2,
-	ok_ClkSrc22393_PLL0_180=3,
-	ok_ClkSrc22393_PLL1_0=4,
-	ok_ClkSrc22393_PLL1_180=5,
-	ok_ClkSrc22393_PLL2_0=6,
-	ok_ClkSrc22393_PLL2_180=7
+	ok_ClkSrc22150_Ref      = 0,
+	ok_ClkSrc22150_Div1ByN  = 1,
+	ok_ClkSrc22150_Div1By2  = 2,
+	ok_ClkSrc22150_Div1By3  = 3,
+	ok_ClkSrc22150_Div2ByN  = 4,
+	ok_ClkSrc22150_Div2By2  = 5,
+	ok_ClkSrc22150_Div2By4  = 6
+} ok_ClockSource_22150;
+
+
+typedef enum {
+	ok_ClkSrc22393_Ref      = 0,
+	ok_ClkSrc22393_PLL0_0   = 2,
+	ok_ClkSrc22393_PLL0_180 = 3,
+	ok_ClkSrc22393_PLL1_0   = 4,
+	ok_ClkSrc22393_PLL1_180 = 5,
+	ok_ClkSrc22393_PLL2_0   = 6,
+	ok_ClkSrc22393_PLL2_180 = 7
 } ok_ClockSource_22393;
+
 
 typedef enum {
 	ok_DivSrc_Ref = 0, 
 	ok_DivSrc_VCO = 1
 } ok_DividerSource;
 
-typedef enum {
-	ok_brdUnknown = 0,
-	ok_brdXEM3001v1 = 1,
-	ok_brdXEM3001v2 = 2,
-	ok_brdXEM3010 = 3,
-	ok_brdXEM3005 = 4,
-	ok_brdXEM3001CL = 5,
-	ok_brdXEM3020 = 6,
-	ok_brdXEM3050 = 7,
-	ok_brdXEM9002 = 8,
-	ok_brdXEM3001RB = 9,
-	ok_brdXEM5010 = 10,
-	ok_brdXEM6110LX45 = 11,
-	ok_brdXEM6110LX150 = 15,
-	ok_brdXEM6001 = 12,
-	ok_brdXEM6010LX45 = 13,
-	ok_brdXEM6010LX150 = 14,
-	ok_brdXEM6006LX9 = 16,
-	ok_brdXEM6006LX16 = 17,
-	ok_brdXEM6006LX25 = 18,
-	ok_brdXEM5010LX110 = 19,
-	ok_brdZEM4310=20,
-	ok_brdXEM6310LX45=21,
-	ok_brdXEM6310LX150=22,
-	ok_brdXEM6110v2LX45=23,
-	ok_brdXEM6110v2LX150=24,
-	ok_brdXEM6002LX9=25,
-	ok_brdXEM6310MTLX45T=26,
-	ok_brdXEM6320LX130T=27,
-	ok_brdXEM7350K70T=28,
-	ok_brdXEM7350K160T=29,
-	ok_brdXEM7350K410T=30,
-	ok_brdXEM6310MTLX150T=31,
-	ok_brdZEM5305A2 = 32,
-	ok_brdZEM5305A7 = 33,
-	ok_brdXEM7001A15 = 34,
-	ok_brdXEM7001A35 = 35,
-	ok_brdXEM7360K160T = 36,
-	ok_brdXEM7360K410T = 37
-} ok_BoardModel;
 
 typedef enum {
-	ok_NoError                    = 0,
-	ok_Failed                     = -1,
-	ok_Timeout                    = -2,
-	ok_DoneNotHigh                = -3,
-	ok_TransferError              = -4,
-	ok_CommunicationError         = -5,
-	ok_InvalidBitstream           = -6,
-	ok_FileError                  = -7,
-	ok_DeviceNotOpen              = -8,
-	ok_InvalidEndpoint            = -9,
-	ok_InvalidBlockSize           = -10,
-	ok_I2CRestrictedAddress       = -11,
-	ok_I2CBitError                = -12,
-	ok_I2CNack                    = -13,
-	ok_I2CUnknownStatus           = -14,
-	ok_UnsupportedFeature         = -15,
-	ok_FIFOUnderflow              = -16,
-	ok_FIFOOverflow               = -17,
-	ok_DataAlignmentError         = -18,
-	ok_InvalidResetProfile        = -19,
-	ok_InvalidParameter           = -20
+	ok_brdUnknown           = 0,
+	ok_brdXEM3001v1         = 1,
+	ok_brdXEM3001v2         = 2,
+	ok_brdXEM3010           = 3,
+	ok_brdXEM3005           = 4,
+	ok_brdXEM3001CL         = 5,
+	ok_brdXEM3020           = 6,
+	ok_brdXEM3050           = 7,
+	ok_brdXEM9002           = 8,
+	ok_brdXEM3001RB         = 9,
+	ok_brdXEM5010           = 10,
+	ok_brdXEM6110LX45       = 11,
+	ok_brdXEM6110LX150      = 15,
+	ok_brdXEM6001           = 12,
+	ok_brdXEM6010LX45       = 13,
+	ok_brdXEM6010LX150      = 14,
+	ok_brdXEM6006LX9        = 16,
+	ok_brdXEM6006LX16       = 17,
+	ok_brdXEM6006LX25       = 18,
+	ok_brdXEM5010LX110      = 19,
+	ok_brdZEM4310           = 20,
+	ok_brdXEM6310LX45       = 21,
+	ok_brdXEM6310LX150      = 22,
+	ok_brdXEM6110v2LX45     = 23,
+	ok_brdXEM6110v2LX150    = 24,
+	ok_brdXEM6002LX9        = 25,
+	ok_brdXEM6310MTLX45T    = 26,
+	ok_brdXEM6320LX130T     = 27,
+	ok_brdXEM7350K70T       = 28,
+	ok_brdXEM7350K160T      = 29,
+	ok_brdXEM7350K410T      = 30,
+	ok_brdXEM6310MTLX150T   = 31,
+	ok_brdZEM5305A2         = 32,
+	ok_brdZEM5305A7         = 33,
+	ok_brdXEM7001A15        = 34,
+	ok_brdXEM7001A35        = 35,
+	ok_brdXEM7360K160T      = 36,
+	ok_brdXEM7360K410T      = 37
+} ok_BoardModel;
+
+
+typedef enum {
+	ok_NoError              = 0,
+	ok_Failed               = -1,
+	ok_Timeout              = -2,
+	ok_DoneNotHigh          = -3,
+	ok_TransferError        = -4,
+	ok_CommunicationError   = -5,
+	ok_InvalidBitstream     = -6,
+	ok_FileError            = -7,
+	ok_DeviceNotOpen        = -8,
+	ok_InvalidEndpoint      = -9,
+	ok_InvalidBlockSize     = -10,
+	ok_I2CRestrictedAddress = -11,
+	ok_I2CBitError          = -12,
+	ok_I2CNack              = -13,
+	ok_I2CUnknownStatus     = -14,
+	ok_UnsupportedFeature   = -15,
+	ok_FIFOUnderflow        = -16,
+	ok_FIFOOverflow         = -17,
+	ok_DataAlignmentError   = -18,
+	ok_InvalidResetProfile  = -19,
+	ok_InvalidParameter     = -20
 } ok_ErrorCode;
+
 
 #ifndef FRONTPANELDLL_EXPORTS
 
@@ -239,24 +245,29 @@ typedef enum {
 #define OK_FPGACONFIGURATIONMETHOD_NVRAM    (0)
 #define OK_FPGACONFIGURATIONMETHOD_JTAG     (1)
 
+
 enum okEFPGAConfigurationMethod {
 	ok_FPGAConfigurationMethod_NVRAM = OK_FPGACONFIGURATIONMETHOD_NVRAM,
 	ok_FPGAConfigurationMethod_JTAG  = OK_FPGACONFIGURATIONMETHOD_JTAG
 };
+
 
 typedef struct {
 	UINT32   address;
 	UINT32   data;
 } okTRegisterEntry;
 
+
 #ifdef __cplusplus
 typedef std::vector<okTRegisterEntry> okTRegisterEntries;
 #endif // __cplusplus
+
 
 typedef struct {
 	UINT32   address;
 	UINT32   mask;
 } okTTriggerEntry;
+
 
 typedef struct {
 	// Magic number indicating the profile is valid.  (4 byte = 0xBE097C3D)
@@ -304,6 +315,7 @@ typedef struct {
 	UINT8                      padBytes2[1520];
 } okTFPGAResetProfile;
 
+
 // Describes the layout of an available Flash memory on the device
 typedef struct {
 	UINT32             sectorCount;
@@ -312,6 +324,7 @@ typedef struct {
 	UINT32             minUserSector;
 	UINT32             maxUserSector;
 } okTFlashLayout;
+
 
 typedef struct {
 	char            deviceID[OK_MAX_DEVICEID_LENGTH];
@@ -340,6 +353,7 @@ typedef struct {
 	okBool          hasResetProfiles;
 } okTDeviceInfo;
 
+
 typedef struct {
 	char            productName[OK_MAX_PRODUCT_NAME_LENGTH];
 	int             productBaseID;
@@ -348,6 +362,7 @@ typedef struct {
 	UINT32          usbPID;
 	UINT32          pciDID;
 } okTDeviceMatchInfo;
+
 
 typedef enum {
 	okDEVICESENSOR_INVALID,
@@ -360,8 +375,10 @@ typedef enum {
 	okDEVICESENSOR_FAN_RPM
 } okEDeviceSensorType;
 
-#define OK_MAX_DEVICE_SENSOR_NAME_LENGTH   (64)   // including NULL termination
-#define OK_MAX_DEVICE_SENSOR_DESCRIPTION_LENGTH   (256)   // including NULL termination
+
+#define OK_MAX_DEVICE_SENSOR_NAME_LENGTH            (64)   // including NULL termination
+#define OK_MAX_DEVICE_SENSOR_DESCRIPTION_LENGTH     (256)   // including NULL termination
+
 
 typedef struct {
     int                    id;
@@ -375,6 +392,7 @@ typedef struct {
 } okTDeviceSensor;
 
 #endif // ! FRONTPANELDLL_EXPORTS
+
 
 typedef enum okEFPGAConfigurationMethod ok_FPGAConfigurationMethod;
 
@@ -409,7 +427,6 @@ okDLLEXPORT Bool DLL_ENTRY okPLL22393_IsPLLEnabled(okPLL22393_HANDLE pll, int n)
 okDLLEXPORT void DLL_ENTRY okPLL22393_InitFromProgrammingInfo(okPLL22393_HANDLE pll, unsigned char *buf);
 okDLLEXPORT void DLL_ENTRY okPLL22393_GetProgrammingInfo(okPLL22393_HANDLE pll, unsigned char *buf);
 
-
 //
 // okPLL22150
 //
@@ -435,7 +452,6 @@ okDLLEXPORT double DLL_ENTRY okPLL22150_GetOutputFrequency(okPLL22150_HANDLE pll
 okDLLEXPORT Bool DLL_ENTRY okPLL22150_IsOutputEnabled(okPLL22150_HANDLE pll, int output);
 okDLLEXPORT void DLL_ENTRY okPLL22150_InitFromProgrammingInfo(okPLL22150_HANDLE pll, unsigned char *buf);
 okDLLEXPORT void DLL_ENTRY okPLL22150_GetProgrammingInfo(okPLL22150_HANDLE pll, unsigned char *buf);
-
 
 //
 // okDeviceSensors
@@ -541,7 +557,6 @@ okDLLEXPORT long DLL_ENTRY okFrontPanel_WriteToPipeIn(okFrontPanel_HANDLE hnd, i
 okDLLEXPORT long DLL_ENTRY okFrontPanel_ReadFromPipeOut(okFrontPanel_HANDLE hnd, int epAddr, long length, unsigned char *data);
 okDLLEXPORT long DLL_ENTRY okFrontPanel_WriteToBlockPipeIn(okFrontPanel_HANDLE hnd, int epAddr, int blockSize, long length, unsigned char *data);
 okDLLEXPORT long DLL_ENTRY okFrontPanel_ReadFromBlockPipeOut(okFrontPanel_HANDLE hnd, int epAddr, int blockSize, long length, unsigned char *data);
-
 
 //
 // okFrontPanelManager

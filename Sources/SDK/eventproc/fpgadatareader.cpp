@@ -14,20 +14,18 @@
 * limitations under the License.
 */
 
-
-// TODO: Delete comments
-
-
 #include "fpgadatareader.h"
 
 
 extern uint64_t g_ulEventFrameNo;
 extern uint64_t g_ulFixedEventNo;
 extern bool isGetFixedVec;
-#define gravity			9.80665			// this is based on what? This constant changes based on your position on the globe -.-
+
+#define gravity			9.80665			// this is based on what? This constant changes based on your position on the globe -> Ger: 9,81
 #define accResolution	0.000598569
 #define resolution		0.000133162
 #define magResolution	0.146489
+
 
 // Byte 0: {1'b0, X[6:0]}
 // Byte 1: {1'b0, C[0], X[8:7], A[3:0]}
@@ -41,6 +39,7 @@ unsigned int FPGADataReader::getColumn(unsigned char data[EVENT_SIZE]) {
 	return result;
 }
 
+
 // Byte 0: {1'b1, Y[6:0]}
 // Byte 1: {1'b1, Y[9:7], T[3:0]}
 unsigned int FPGADataReader::getRow(unsigned char data[EVENT_SIZE]) {
@@ -48,6 +47,7 @@ unsigned int FPGADataReader::getRow(unsigned char data[EVENT_SIZE]) {
 	last7bit += static_cast<unsigned char>(data[0]) & 0x7F;
 	return last7bit + ((static_cast<unsigned char>(data[1]) & 0x70) << 3);
 }
+
 
 // Byte 1: {1'b1, Y[9,7], T[3:0]}
 // Byte 2: {1'b1, T[10:4]}
@@ -60,6 +60,7 @@ unsigned int FPGADataReader::getTimeStamp(unsigned char data[EVENT_SIZE]) {
 	return last4bit + (mid7bit << 4) + (static_cast<unsigned int>(data[3] & 0x7F) << 11);
 }
 
+
 // Byte 1: {1'b0, C[0], X[8:7], A[3:0]}
 // Byte 2: {3'b0, A[8:4]}
 unsigned int FPGADataReader::getBrightness(unsigned char data[EVENT_SIZE]) { //ADC
@@ -68,9 +69,11 @@ unsigned int FPGADataReader::getBrightness(unsigned char data[EVENT_SIZE]) { //A
 	return last4bit + (static_cast<unsigned int>(data[2] & 0x1F) << 4);
 }
 
+
 bool FPGADataReader::isForcefirePixel(unsigned char data[EVENT_SIZE]) { //column event from force fire, carrying ADC
 	return ((unsigned char)data[3] & 0x01) == 1;
 }
+
 
 // Byte 0: {1'b0, X[6:0]}
 // Byte 1: {1'b0, C[0], X[8:7], A[3:0]}
@@ -84,6 +87,7 @@ bool FPGADataReader::isColumnEvent(unsigned char data[EVENT_SIZE]) {
 	return result;
 }
 
+
 // Byte 0: {1'b1, Y[6:0]}
 // Byte 1: {1'b1, Y[9:7], T[3:0]}
 // Byte 2: {1'b1, T[10:4]}
@@ -92,6 +96,7 @@ bool FPGADataReader::isRowEvent(unsigned char data[EVENT_SIZE]) {
 	return (((unsigned char)data[0] & 0x80) > 0 && ((unsigned char)data[1] & 0x80) > 0 &&
 			((unsigned char)data[2] & 0x80) > 0 && ((unsigned char)data[3] & 0xC0) == 0x80);
 }
+
 
 // Byte 0: {8'b1}
 // Byte 1: {8'b1}
@@ -110,6 +115,7 @@ bool FPGADataReader::isSpecialEvent(unsigned char data[EVENT_SIZE]) {
 	return result;
 }
 
+
 unsigned int FPGADataReader::MapTime(unsigned char data[EVENT_SIZE]) {
 	if (isRowEvent(data)) {
 		s_uiLastRow = s_uiCurrentRow;
@@ -120,6 +126,7 @@ unsigned int FPGADataReader::MapTime(unsigned char data[EVENT_SIZE]) {
 
 	return 1;
 }
+
 
 // Flag_GYROS_A[4:0]=5'b00_101
 // Flag_GYROS_A[4:0]={GYROS_A[31:30], GYROS_A[23], GYROS_A[15], GYROS_A[7]}
@@ -180,6 +187,7 @@ FPGADataReader::IMUDATAType FPGADataReader::isIMUData(unsigned char data[4]) {
 	return FPGADataReader::NO_IMU_DATA;
 }
 
+
 // X_GYROS[15:0] = { GYROS_A[17:16], GYROS_A[14:8], GYROS_A[6:0] }
 // Y_GYROS[5:0] = { GYROS_A[29:24] }
 // Timer_GYROS[4:1] = { GYROS_A[22:19] }
@@ -195,6 +203,7 @@ int16_t FPGADataReader::getIMU_X(unsigned char data[4]) {
 	return low7bit + (mid7bit << 7) + (high2bit << 14);
 }
 
+
 // Y_GYROS[5:0] = { GYROS_A[29:24] }
 // Y_GYROS[15:6] = { GYROS_B[10:8], GYROS_B[6:0] }
 int16_t FPGADataReader::getIMU_Y(unsigned char data[4]) {
@@ -205,6 +214,7 @@ int16_t FPGADataReader::getIMU_Y(unsigned char data[4]) {
 	return low6bit + (mid7bit << 6) + (high3bit << 13);
 }
 
+
 // Z_GYROS[15:0] = { GYROS_B[29:24], GYROS_B[21:16], GYROS_B[14:11] }
 int16_t FPGADataReader::getIMU_Z(unsigned char data[4]) {
 	int16_t low4bit = static_cast<int16_t>(data[1] & 0x78);
@@ -214,23 +224,25 @@ int16_t FPGADataReader::getIMU_Z(unsigned char data[4]) {
 	return (low4bit >> 3) + (mid6bit << 4) + (high6bit << 10);
 }
 
+
 // Timer_GYROS[4:1] = { GYROS_A[22:19] }
 // Timer_GYROS[0] = { GYROS_B[22] }
 uint16_t FPGADataReader::getIMU_T(unsigned char data[4]) {
 	return s_uiHighGYROS_T + (static_cast<uint16_t>(data[2] & 0x40) >> 6);
 }
 
-unsigned int FPGADataReader::s_uiCurrentRow = PIXELS_PER_COL;
-unsigned int FPGADataReader::s_uiLastRow = PIXELS_PER_COL;
-unsigned int FPGADataReader::s_uiTFromFPGA = 0;
-unsigned int FPGADataReader::s_uiLastTFromFPGA = 0;
-unsigned int FPGADataReader::s_uiMapT = 0;
-unsigned int FPGADataReader::s_uiEventType = 0;
-unsigned int FPGADataReader::s_uiSpecialEventType = 0;
 
-int16_t FPGADataReader::s_iLowGYROS_Y = 0;
-uint16_t FPGADataReader::s_uiHighGYROS_T = 0;
-IMUData FPGADataReader::s_IMUData;
-uint32_t FPGADataReader::s_uiEventTCounter = 0;
-uint32_t FPGADataReader::s_uiFixedEventTCounter = 0;
+unsigned int FPGADataReader::s_uiCurrentRow         = PIXELS_PER_COL;
+unsigned int FPGADataReader::s_uiLastRow            = PIXELS_PER_COL;
+unsigned int FPGADataReader::s_uiTFromFPGA          = 0;
+unsigned int FPGADataReader::s_uiLastTFromFPGA      = 0;
+unsigned int FPGADataReader::s_uiMapT               = 0;
+unsigned int FPGADataReader::s_uiEventType          = 0;
+unsigned int FPGADataReader::s_uiSpecialEventType   = 0;
+
+int16_t FPGADataReader::s_iLowGYROS_Y               = 0;
+uint16_t FPGADataReader::s_uiHighGYROS_T            = 0;
+IMUData FPGADataReader::s_IMUData;                  // this is useless isnt it?
+uint32_t FPGADataReader::s_uiEventTCounter          = 0;
+uint32_t FPGADataReader::s_uiFixedEventTCounter     = 0;
 

@@ -17,27 +17,8 @@
 #ifndef CELEX4_PROCESSED_DATA_H
 #define CELEX4_PROCESSED_DATA_H
 
+#include <opencv/opencv2/opencv.hpp>
 #include "celex4.h"
-
-#ifndef COMPATIBILITY_VERSION
-	#ifdef __has_include
-		#if __has_include(<opencv/opencv2/opencv.hpp>)
-			#include <opencv/opencv2/opencv.hpp>
-			#define COMPATIBILITY_VERSION 4
-		#elif __has_include(<opencv2/opencv.hpp>)
-			#include <opencv2/opencv.hpp>
-			#define COMPATIBILITY_VERSION 2
-		#else
-			#error "Keine installierte OpenCV-Version gefunden!"
-		#endif
-	#endif
-#else
-	#if COMPATIBILITY_VERSION == 4
-		#include <opencv/opencv2/opencv.hpp>
-	#else
-		#include <opencv2/opencv.hpp>
-	#endif
-#endif
 
 
 class CeleX4ProcessedData {

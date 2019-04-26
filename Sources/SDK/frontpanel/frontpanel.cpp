@@ -14,17 +14,12 @@
 * limitations under the License.
 */
 
-
-// TODO: cout's realy necessary? Why not put into Preprocessor-DEBUG?
-
-
 #include "frontpanel.h"
 
 
 FrontPanel* FrontPanel::spFrontPanel = NULL;
 
 void FrontPanel::initializeFPGA(const string &bitfileName) {
-    cout << "Begin initialize FPGA." << endl;
     if (!myxem->IsOpen()) {
         if (okCFrontPanel::NoError != myxem->OpenBySerial()) {
             cout << "FrontPanel Device not found..." << endl;
